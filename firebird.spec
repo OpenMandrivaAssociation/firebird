@@ -1,10 +1,15 @@
 %define name firebird
-%define version 2.0.0.12748
-%define release %mkrel 8
 
-%define major 2
-%define libfbclient %mklibname fbclient %major
-%define libfbembed %mklibname fbembed %major
+%define major 2.0.1.12855
+%define minor 0
+%define version %{major}.%{minor}
+%define pkgname Firebird
+%define pkgversion %{major}-%{minor}
+%define release %mkrel 1
+
+%define somajor 2
+%define libfbclient %mklibname fbclient %somajor
+%define libfbembed %mklibname fbembed %somajor
 
 %define fbroot		%{_libdir}/%{name}
 
@@ -14,12 +19,11 @@ Release:	%{release}
 Summary:	Firebird SQL Database, fork of InterBase
 Group:		Databases
 License:	IPL
-URL:		http://firebird.sourceforge.net/
-Source0:	http://aleron.dl.sourceforge.net/sourceforge/firebird/Firebird-%{version}.tar.bz2
+URL:		http://www.firebirdsql.org/
+Source0:	http://aleron.dl.sourceforge.net/sourceforge/firebird/%{pkgname}-%{pkgversion}.tar.bz2
 Source1:	firebird-2.0.0-profile.sh
 Source2:	firebird-2.0.0-profile.csh
 Patch0:		firebird-mcpu-to-mtune.patch
-Patch1:		firebird-amd64.patch
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -311,13 +315,15 @@ firebird-server-superserver. You will need this if you want to use either one.
 %{fbroot}/bin/restoreRootRunUser.sh
 
 %prep
-%setup -q -n %{name}-%{version}
+%setup -q -n %{pkgname}-%{pkgversion}
 %patch0
-%patch1
 
 # -----------------------------------------------------------------------------
 
 %build
+# Fix permissions
+chmod +x ./autogen.sh ./src/misc/writeBuildNum.sh
+
 # server-classic
 NOCONFIGURE=1 ./autogen.sh
 %configure --prefix=%{fbroot}
@@ -355,9 +361,9 @@ cd ..
 %install
 [ "%{buildroot}" != "/" ] && rm -rf %{buildroot}
 install -d %{buildroot}
-cp -a %{_builddir}/%{name}-%{version}/gen/buildroot-superserver/* \
+cp -a %{_builddir}/%{pkgname}-%{pkgversion}/gen/buildroot-superserver/* \
 	%{buildroot}
-cp -a %{_builddir}/%{name}-%{version}/gen/buildroot-classic/* \
+cp -a %{_builddir}/%{pkgname}-%{pkgversion}/gen/buildroot-classic/* \
 	%{buildroot}
 
 cd %{buildroot}
@@ -457,5 +463,3 @@ fi
 
 %post server-common -p /sbin/ldconfig
 %postun server-common -p /sbin/ldconfig
-
-
