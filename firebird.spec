@@ -324,6 +324,10 @@ firebird-server-superserver. You will need this if you want to use either one.
 # Fix permissions
 chmod +x ./autogen.sh ./src/misc/writeBuildNum.sh
 
+# <mrl> For reference, the proccess fb_lock_mgr that keeps executing after
+# building finish is started at gen/Makefile.codes, line 60 (target
+# build_codes) but I can't do nothing for it without major hacking.
+
 # server-classic
 NOCONFIGURE=1 ./autogen.sh
 %configure --prefix=%{fbroot}
