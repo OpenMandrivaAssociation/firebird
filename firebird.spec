@@ -5,7 +5,7 @@
 %define version %{major}.%{minor}
 %define pkgname Firebird
 %define pkgversion %{major}-%{minor}
-%define release %mkrel 1
+%define release %mkrel 2
 
 %define somajor 2
 %define libfbclient %mklibname fbclient %somajor
@@ -229,7 +229,7 @@ Summary:	Superserver (single process) server for Firebird SQL Database
 Group:		Databases
 Provides:	firebird-server = %{version}-%{release}
 #Requires:	%{name}
-Requires:	%{name}-server-common = %{version}
+Requires:	%{name}-server-common = %{version}-%{release}
 Conflicts:	%{name}-server-classic
 
 %description	server-superserver
@@ -243,7 +243,6 @@ multi-threaded client library.
 %dir %attr(0775,%{name},%{name}) %{_var}/run/%{name}
 %dir %{fbroot}/bin
 %dir %{fbroot}/tools-superserver
-%{fbroot}/UDF/fbudf.so
 %defattr(0755,root,root,0755)
 %{_sysconfdir}/rc.d/init.d/%{name}
 %{fbroot}/bin/fb_lock_print
@@ -268,6 +267,7 @@ Requires(postun):	/usr/sbin/userdel
 Requires(postun):	/usr/sbin/groupdel
 Requires(pre):		/usr/sbin/groupadd
 Requires(pre):		/usr/sbin/useradd
+Obsoletes:		%{name}-serversuperserver < 2.0.1.12855.0-2mdk
 
 %description		server-common
 This package contains common files between firebird-server-classic and
