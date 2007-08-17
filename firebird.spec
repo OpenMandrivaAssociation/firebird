@@ -5,7 +5,7 @@
 %define version %{major}.%{minor}
 %define pkgname Firebird
 %define pkgversion %{major}-%{minor}
-%define release %mkrel 2
+%define release %mkrel 3
 
 %define somajor 2
 %define libfbclient %mklibname fbclient %somajor
@@ -267,7 +267,7 @@ Requires(postun):	/usr/sbin/userdel
 Requires(postun):	/usr/sbin/groupdel
 Requires(pre):		/usr/sbin/groupadd
 Requires(pre):		/usr/sbin/useradd
-Obsoletes:		%{name}-serversuperserver < 2.0.1.12855.0-2mdk
+Obsoletes:		%{name}-server-superserver < 2.0.1.12855.0-3mdk
 
 %description		server-common
 This package contains common files between firebird-server-classic and
