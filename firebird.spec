@@ -1,6 +1,6 @@
 %define name firebird
 
-%define major 2.0.1.12855
+%define major 2.0.2.12964
 %define minor 0
 %define version %{major}.%{minor}
 %define pkgname Firebird
