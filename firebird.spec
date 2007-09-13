@@ -1,11 +1,11 @@
 %define name firebird
 
-%define major 2.0.2.12964
+%define major 2.0.3.12981
 %define minor 0
 %define version %{major}.%{minor}
 %define pkgname Firebird
 %define pkgversion %{major}-%{minor}
-%define release %mkrel 3
+%define release %mkrel 1
 
 %define somajor 2
 %define libfbclient %mklibname fbclient %somajor
