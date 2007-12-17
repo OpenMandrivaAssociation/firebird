@@ -24,7 +24,6 @@ Source0:	http://aleron.dl.sourceforge.net/sourceforge/firebird/%{pkgname}-%{pkgv
 Source1:	firebird-2.0.0-profile.sh
 Source2:	firebird-2.0.0-profile.csh
 Patch0:		firebird-mcpu-to-mtune.patch
-BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 BuildRequires:	autoconf
 BuildRequires:	automake
 BuildRequires:	bison
