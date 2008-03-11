@@ -5,7 +5,7 @@
 %define version %{major}.%{minor}
 %define pkgname Firebird
 %define pkgversion %{major}-%{minor}
-%define release %mkrel 1
+%define release %mkrel 2
 
 %define somajor 2
 %define libfbclient %mklibname fbclient %somajor
@@ -24,6 +24,7 @@ Source0:	http://aleron.dl.sourceforge.net/sourceforge/firebird/%{pkgname}-%{pkgv
 Source1:	firebird-2.0.0-profile.sh
 Source2:	firebird-2.0.0-profile.csh
 Patch0:		firebird-mcpu-to-mtune.patch
+Patch1:		firebird-2.0.3-fix-initscript.patch
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -317,6 +318,7 @@ firebird-server-superserver. You will need this if you want to use either one.
 %prep
 %setup -q -n %{pkgname}-%{pkgversion}
 %patch0
+%patch1 -p1
 
 # -----------------------------------------------------------------------------
 
@@ -409,6 +411,10 @@ fi
 if /sbin/service xinetd status >& /dev/null; then
 	/sbin/service xinetd reload
 fi
+if [ ! -f /etc/gds_hosts.equiv ]; then
+	echo localhost > /etc/gds_hosts.equiv
+fi
+
 
 %preun server-classic
 if [ $1 -eq 0 ]; then
@@ -436,6 +442,9 @@ if [ $1 -eq 2 ]; then
 fi
 if [ $1 -eq 1 ]; then
 	chkconfig firebird off
+fi
+if [ ! -f /etc/gds_hosts.equiv ]; then
+	echo localhost > /etc/gds_hosts.equiv
 fi
 
 %preun server-superserver
