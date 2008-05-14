@@ -1,11 +1,11 @@
 %define name firebird
 
-%define major 2.0.3.12981
-%define minor 0
+%define major 2.0.4.13130
+%define minor 1
 %define version %{major}.%{minor}
 %define pkgname Firebird
 %define pkgversion %{major}-%{minor}
-%define release %mkrel 2
+%define release %mkrel 1
 
 %define somajor 2
 %define libfbclient %mklibname fbclient %somajor
@@ -16,15 +16,18 @@
 Name:		%{name}
 Version:	%{version}
 Release:	%{release}
-Summary:	Firebird SQL Database, fork of InterBase
+Summary:	Firebird SQL database management system
 Group:		Databases
 License:	IPL
 URL:		http://www.firebirdsql.org/
-Source0:	http://aleron.dl.sourceforge.net/sourceforge/firebird/%{pkgname}-%{pkgversion}.tar.bz2
+Source0:	http://downloads.sourceforge.net/firebird/%{pkgname}-%{pkgversion}.tar.bz2
+# Source0:	http://aleron.dl.sourceforge.net/sourceforge/firebird/%{pkgname}-%{pkgversion}.tar.bz2
 Source1:	firebird-2.0.0-profile.sh
 Source2:	firebird-2.0.0-profile.csh
+
 Patch0:		firebird-mcpu-to-mtune.patch
 Patch1:		firebird-2.0.3-fix-initscript.patch
+
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -476,3 +479,5 @@ fi
 
 %post server-common -p /sbin/ldconfig
 %postun server-common -p /sbin/ldconfig
+
+
