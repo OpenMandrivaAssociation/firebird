@@ -402,10 +402,18 @@ rm -rf %{buildroot}
 # lib scripts
 # -----------------------------------------------------------------------------
 # While using -p flag, you can't leave comments until the next tag.
+%if %mdkversion < 200900
 %post -n %libfbclient -p /sbin/ldconfig
+%endif
+%if %mdkversion < 200900
 %postun -n %libfbclient -p /sbin/ldconfig
+%endif
+%if %mdkversion < 200900
 %post -n %libfbembed -p /sbin/ldconfig
+%endif
+%if %mdkversion < 200900
 %postun -n %libfbembed -p /sbin/ldconfig
+%endif
 
 %post server-classic
 if test ! -e %{fbroot}/tools; then
@@ -477,7 +485,11 @@ if [ -z "$oldLine" ]; then
 	echo $newLine >> $FileName
 fi
 
+%if %mdkversion < 200900
 %post server-common -p /sbin/ldconfig
+%endif
+%if %mdkversion < 200900
 %postun server-common -p /sbin/ldconfig
+%endif
 
 
