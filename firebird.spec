@@ -1,11 +1,8 @@
-%define name firebird
-
-%define major 2.0.4.13130
-%define minor 1
+%define major 2.1.1.17910
+%define minor 0
 %define version %{major}.%{minor}
 %define pkgname Firebird
 %define pkgversion %{major}-%{minor}
-%define release %mkrel 1
 
 %define somajor 2
 %define libfbclient %mklibname fbclient %somajor
@@ -13,10 +10,10 @@
 
 %define fbroot		%{_libdir}/%{name}
 
-Name:		%{name}
-Version:	%{version}
-Release:	%{release}
 Summary:	Firebird SQL database management system
+Name:		firebird
+Version:	%{version}
+Release:	%mkrel 1
 Group:		Databases
 License:	IPL
 URL:		http://www.firebirdsql.org/
@@ -24,20 +21,21 @@ Source0:	http://downloads.sourceforge.net/firebird/%{pkgname}-%{pkgversion}.tar.
 # Source0:	http://aleron.dl.sourceforge.net/sourceforge/firebird/%{pkgname}-%{pkgversion}.tar.bz2
 Source1:	firebird-2.0.0-profile.sh
 Source2:	firebird-2.0.0-profile.csh
-
 Patch0:		firebird-mcpu-to-mtune.patch
 Patch1:		firebird-2.0.3-fix-initscript.patch
-
-BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
+Patch2:		Firebird-edit_fix.diff
 BuildRequires:	autoconf
 BuildRequires:	automake
 BuildRequires:	bison
 BuildRequires:	libtool
 BuildRequires:  libncurses-devel
 BuildRequires:  libtermcap-devel
+BuildRequires:  icu-devel
+BuildRequires:  edit-devel
 Requires:	%{name}-arch = %{version}
 Requires:	grep
 Requires:	sed
+BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 
 %description
 This is the Firebird SQL Database shared files.
@@ -48,7 +46,6 @@ This is the Firebird SQL Database shared files.
 %doc %{fbroot}/WhatsNew
 %doc %{fbroot}/doc/
 %doc %{fbroot}/examples/
-%doc %{fbroot}/upgrade/
 %attr (0660,%{name},%{name}) %{fbroot}/examples/empbuild/employee.fdb
 
 #
@@ -186,9 +183,6 @@ Multi-process, non-local client libraries for Firebird SQL Database
 %dir %{fbroot}/lib
 %{_libdir}/libfbembed.so.*
 %{fbroot}/lib/libfbembed.so.*
-%{fbroot}/lib/libicudata.so.*
-%{fbroot}/lib/libicui18n.so.*
-%{fbroot}/lib/libicuuc.so.*
 
 #
 # Classic server programs
@@ -220,6 +214,7 @@ multi-threaded client library.
 %{fbroot}/bin/fb_lock_mgr
 %{fbroot}/bin/fb_lock_print
 %{fbroot}/bin/gds_drop
+%{fbroot}/bin/fbsvcmgr
 %{fbroot}/tools-classic/gsec
 %{fbroot}/tools-classic/changeDBAPassword.sh
 %{fbroot}/tools-classic/changeRunUser.sh
@@ -320,8 +315,9 @@ firebird-server-superserver. You will need this if you want to use either one.
 
 %prep
 %setup -q -n %{pkgname}-%{pkgversion}
-%patch0
-%patch1 -p1
+%patch0 -p0
+%patch1 -p0
+%patch2 -p1
 
 # -----------------------------------------------------------------------------
 
@@ -335,7 +331,7 @@ chmod +x ./autogen.sh ./src/misc/writeBuildNum.sh
 
 # server-classic
 NOCONFIGURE=1 ./autogen.sh
-%configure --prefix=%{fbroot}
+%configure --prefix=%{fbroot} --with-system-editline --with-system-icu
 # Can't use %%make as itsparallel build is broken
 make
 cd gen
@@ -351,7 +347,7 @@ done
 cd ..
 
 # server-superserver
-%configure --prefix=%{fbroot} --enable-superserver
+%configure --prefix=%{fbroot} --enable-superserver --with-system-editline --with-system-icu
 # Can't use %%make as itsparallel build is broken
 make
 cd gen
@@ -369,7 +365,10 @@ cd ..
 
 %install
 [ "%{buildroot}" != "/" ] && rm -rf %{buildroot}
+
 install -d %{buildroot}
+
+# this is fugly and broken...
 cp -a %{_builddir}/%{pkgname}-%{pkgversion}/gen/buildroot-superserver/* \
 	%{buildroot}
 cp -a %{_builddir}/%{pkgname}-%{pkgversion}/gen/buildroot-classic/* \
