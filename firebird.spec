@@ -1,4 +1,8 @@
-%define major 2.1.1.17910
+%if %mdkversion >= 200910
+%define Werror_cflags %{nil}
+%endif
+
+%define major 2.1.2.18118
 %define minor 0
 %define version %{major}.%{minor}
 %define pkgname Firebird
@@ -328,6 +332,8 @@ chmod +x ./autogen.sh ./src/misc/writeBuildNum.sh
 # <mrl> For reference, the proccess fb_lock_mgr that keeps executing after
 # building finish is started at gen/Makefile.codes, line 60 (target
 # build_codes) but I can't do nothing for it without major hacking.
+
+autoreconf -fis
 
 # server-classic
 NOCONFIGURE=1 ./autogen.sh
