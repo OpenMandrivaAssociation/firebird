@@ -17,7 +17,7 @@
 Summary:	Firebird SQL database management system
 Name:		firebird
 Version:	%{version}
-Release:	%mkrel 1
+Release:	%mkrel 2
 Group:		Databases
 License:	IPL
 URL:		http://www.firebirdsql.org/
@@ -480,7 +480,7 @@ fi
 %pre server-common
 # Create the firebird group if it doesn't exist
 grep -q %{name} /etc/group || /usr/sbin/groupadd -r %{name} || true
-grep -q %{name} /etc/passwd || /usr/sbin/useradd -d / -g %{name} -s /sbin/nologin -r %{name} || true
+grep -q %{name} /etc/passwd || /usr/sbin/useradd -d / -g %{name} -s /sbin/sh -r %{name} || true
 
 # Add gds_db to /etc/services if needed
 FileName=/etc/services
