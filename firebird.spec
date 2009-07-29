@@ -2,32 +2,31 @@
 %define Werror_cflags %{nil}
 %endif
 
-%define major 2.1.2.18118
-%define minor 0
-%define version %{major}.%{minor}
-%define pkgname Firebird
-%define pkgversion %{major}-%{minor}
-
+%define	major 2.1.3
+%define pkgname Firebird-2.1.3.18185-0
+%define version 2.1.3.18185.0
 %define somajor 2
 %define libfbclient %mklibname fbclient %somajor
 %define libfbembed %mklibname fbembed %somajor
 
-%define fbroot		%{_libdir}/%{name}
+%define fbroot %{_libdir}/%{name}
 
 Summary:	Firebird SQL database management system
 Name:		firebird
 Version:	%{version}
-Release:	%mkrel 2
+Release:	%mkrel 0
 Group:		Databases
 License:	IPL
 URL:		http://www.firebirdsql.org/
-Source0:	http://downloads.sourceforge.net/firebird/%{pkgname}-%{pkgversion}.tar.bz2
-# Source0:	http://aleron.dl.sourceforge.net/sourceforge/firebird/%{pkgname}-%{pkgversion}.tar.bz2
-Source1:	firebird-2.0.0-profile.sh
-Source2:	firebird-2.0.0-profile.csh
+#Source0:	http://downloads.sourceforge.net/firebird/%{pkgname}.tar.bz2
+Source0:	http://firebirdsql.org/downloads/prerelease/source/%{pkgname}.RC2.tar.bz2
+Source1:	firebird-logrotate
+Source2:	firebird.mdv.releasenote
 Patch0:		firebird-mcpu-to-mtune.patch
-Patch1:		firebird-2.0.3-fix-initscript.patch
+Patch1:		firebird.init.d.mandrake.in.patch
 Patch2:		Firebird-edit_fix.diff
+Patch3:		firebird_lock-file-location.patch
+Patch4:		firebird-gcc-icu.patch
 BuildRequires:	autoconf
 BuildRequires:	automake
 BuildRequires:	bison
@@ -36,7 +35,8 @@ BuildRequires:  libncurses-devel
 BuildRequires:  libtermcap-devel
 BuildRequires:  icu-devel
 BuildRequires:  edit-devel
-Requires:	%{name}-arch = %{version}
+BuildRequires:	gcc-c++
+Requires:	%{name}-arch = %{version}-%{release}
 Requires:	grep
 Requires:	sed
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
@@ -46,11 +46,13 @@ This is the Firebird SQL Database shared files.
 
 %files
 %defattr(0644,root,root,0755)
-%doc %{fbroot}/README
-%doc %{fbroot}/WhatsNew
-%doc %{fbroot}/doc/
-%doc %{fbroot}/examples/
-%attr (0660,%{name},%{name}) %{fbroot}/examples/empbuild/employee.fdb
+%doc doc/license/IDPL.txt
+%doc doc/license/README.license.usage.txt
+%doc gen/buildroot-classic%{fbroot}/doc
+%doc gen/buildroot-classic%{fbroot}/examples
+%doc gen/buildroot-classic%{fbroot}/README
+%doc gen/buildroot-classic%{fbroot}/misc/intl.sql
+%doc gen/buildroot-classic%{fbroot}/misc/upgrade
 
 #
 # Meta packages for allowing urpmi asking only once
@@ -61,6 +63,8 @@ Group:		Databases
 Provides:	%{name}-arch = %{version}-%{release}
 Requires:	%{name}-server-classic = %{version}
 Requires:	%{name}-utils-classic = %{version}
+# Yes, we need force this. Otherwise, only direct local access wil be available.
+Requires:	%libfbclient
 Conflicts:	%{name}-superserver
 
 %description	classic
@@ -87,15 +91,15 @@ This is a meta-package for easy selecting the SuperServer arch for Firebird 2
 %package	devel
 Summary:	Development Libraries for Firebird SQL Database
 Group:		Development/Databases
-Requires:	%{name} = %{version}
-# Yes, we need force this. Otherwise, clients with this flavor will fail to build.
 Requires:	%libfbclient
+Requires:	%libfbembed
 
 %description	devel
 Development libraries for firebird.
 
 %files devel
 %defattr(0644,root,root,0755)
+%dir %{fbroot}/include
 %{fbroot}/include/*
 %{fbroot}/lib/*.so
 %{_includedir}/*
@@ -111,25 +115,21 @@ Development libraries for firebird.
 %package	utils-classic
 Summary:	Client programs for Firebird SQL Database
 Group:		Databases
-Requires:	%{name}-server-common = %{version}
-Provides:	%{name}-utils = %{version}-%{release}
+Provides:	%{name}-utils-arch = %{version}-%{release}
+Requires:	%{name}-utils-common = %{version}
 Conflicts:	%{name}-utils-superserver
 Obsoletes:	%{name}-client-embedded <= 2.0
 
 %description	utils-classic
-Client access tools for firebird.
+Client access tools for firebird embeded only.
 
 %files		utils-classic
 %defattr(0755,root,root,0755)
 %dir %{fbroot}/tools-classic
-%dir %{fbroot}/bin
-%{fbroot}/bin/gbak
-%{fbroot}/tools-classic/gdef
-%{fbroot}/bin/gfix
-%{fbroot}/tools-classic/gpre
-%{fbroot}/bin/gstat
-%{fbroot}/bin/isql
-%{fbroot}/bin/qli
+%{fbroot}/tools-classic/gbak
+%{fbroot}/tools-classic/fbsvcmgr
+%{fbroot}/tools-classic/isql
+%{fbroot}/tools-classic/qli
 
 #
 # Utils programs (superserver)
@@ -137,8 +137,8 @@ Client access tools for firebird.
 %package	utils-superserver
 Summary:	Client programs for Firebird SQL Database
 Group:		Databases
-Requires:	%{name}-server-common = %{version}
-Provides:	%{name}-utils = %{version}-%{release}
+Provides:	%{name}-utils-arch = %{version}-%{release}
+Requires:	%{name}-utils-common = %{version}
 Conflicts:	%{name}-utils-classic
 
 %description	utils-superserver
@@ -147,14 +147,37 @@ Client access tools for firebird.
 %files		utils-superserver
 %defattr(0755,root,root,0755)
 %dir %{fbroot}/tools-superserver
+%{fbroot}/tools-superserver/gbak
+%{fbroot}/tools-superserver/fbsvcmgr
+%{fbroot}/tools-superserver/isql
+%{fbroot}/tools-superserver/qli
+
+%package	utils-common
+Summary:	Client programs for Firebird SQL Database
+Group:		Databases
+Requires:	%{name}-utils-arch = %{version}-%{release}
+
+%description	utils-common
+Common client access tools for firebird.
+
+%files			utils-common
+%defattr(0644,root,root,0755)
+%doc doc/license/IDPL.txt
+%doc doc/license/README.license.usage.txt
+%defattr(0755,root,root,0755)
+%dir %{fbroot}
 %dir %{fbroot}/bin
+%ghost %{fbroot}/tools
+%{_bindir}/isql-fb
+%{_bindir}/gbak
+%{_bindir}/fbsvcmgr
+%{_bindir}/qli
 %{fbroot}/bin/gbak
-%{fbroot}/tools-superserver/gdef
-%{fbroot}/bin/gfix
-%{fbroot}/tools-superserver/gpre
-%{fbroot}/bin/gstat
+%{fbroot}/bin/fbsvcmgr
 %{fbroot}/bin/isql
 %{fbroot}/bin/qli
+%defattr(0644,root,root,0755)
+%{fbroot}/*.msg
 
 #
 # Multi-threaded, independant client libraries
@@ -170,17 +193,18 @@ Multi-threaded, non-local client libraries for Firebird SQL Database
 %defattr(0644,root,root,0755)
 %dir %{fbroot}/lib
 %{_libdir}/libfbclient.so.*
+%{_libdir}/libgds.so.0
 %{fbroot}/lib/libfbclient.so.*
 
 #
 # Multi-process, independant client libraries
 #
 %package -n %libfbembed
-Summary: Multi-process, non-local client libraries for Firebird SQL Database
+Summary: Multi-process, local client libraries for Firebird SQL Database
 Group: System/Libraries
 
 %description -n %libfbembed
-Multi-process, non-local client libraries for Firebird SQL Database
+Multi-process, local client libraries for Firebird SQL Database
 
 %files -n %libfbembed
 %defattr(0644,root,root,0755)
@@ -211,18 +235,24 @@ multi-threaded client library.
 %defattr(0644,root,root,0755)
 %dir %{fbroot}/bin
 %dir %{fbroot}/tools-classic
+%dir %{fbroot}/UDF/classic
 %config(noreplace) %{_sysconfdir}/xinetd.d/%{name}
 %defattr(0755,root,root,0755)
-%{fbroot}/bin/changeGdsLibraryCompatibleLink.sh
 %{fbroot}/bin/fb_inet_server
 %{fbroot}/bin/fb_lock_mgr
-%{fbroot}/bin/fb_lock_print
 %{fbroot}/bin/gds_drop
-%{fbroot}/bin/fbsvcmgr
+%{fbroot}/tools-classic/fb_lock_print
 %{fbroot}/tools-classic/gsec
-%{fbroot}/tools-classic/changeDBAPassword.sh
-%{fbroot}/tools-classic/changeRunUser.sh
-%{fbroot}/tools-classic/restoreRootRunUser.sh
+%{fbroot}/tools-classic/gdef
+%{fbroot}/tools-classic/gfix
+%{fbroot}/tools-classic/gpre
+%{fbroot}/tools-classic/gsplit
+%{fbroot}/tools-classic/gstat
+%{fbroot}/tools-classic/nbackup
+%{fbroot}/tools-classic/*.sh
+%{fbroot}/tools-classic/fb_config
+%defattr(0644,root,root,-)
+%{fbroot}/UDF/classic/*.so
 
 #
 # Super server programs
@@ -231,7 +261,6 @@ multi-threaded client library.
 Summary:	Superserver (single process) server for Firebird SQL Database
 Group:		Databases
 Provides:	firebird-server = %{version}-%{release}
-#Requires:	%{name}
 Requires:	%{name}-server-common = %{version}-%{release}
 Conflicts:	%{name}-server-classic
 
@@ -246,17 +275,25 @@ multi-threaded client library.
 %dir %attr(0775,%{name},%{name}) %{_var}/run/%{name}
 %dir %{fbroot}/bin
 %dir %{fbroot}/tools-superserver
+%dir %{fbroot}/UDF/superserver
 %defattr(0755,root,root,0755)
-%{_sysconfdir}/rc.d/init.d/%{name}
-%{fbroot}/bin/fb_lock_print
+%{_initrddir}/%{name}
 %{fbroot}/bin/fbguard
 %{fbroot}/bin/fbmgr
 %{fbroot}/bin/fbmgr.bin
 %{fbroot}/bin/fbserver
+%{fbroot}/tools-superserver/fb_lock_print
 %{fbroot}/tools-superserver/gsec
-%{fbroot}/tools-superserver/changeDBAPassword.sh
-%{fbroot}/tools-superserver/changeRunUser.sh
-%{fbroot}/tools-superserver/restoreRootRunUser.sh
+%{fbroot}/tools-superserver/gdef
+%{fbroot}/tools-superserver/gfix
+%{fbroot}/tools-superserver/gpre
+%{fbroot}/tools-superserver/gsplit
+%{fbroot}/tools-superserver/gstat
+%{fbroot}/tools-superserver/nbackup
+%{fbroot}/tools-superserver/*.sh
+%{fbroot}/tools-superserver/fb_config
+%defattr(0644,root,root,755)
+%{fbroot}/UDF/superserver/*.so
 
 #
 # Server's common files
@@ -266,10 +303,12 @@ Summary:		Common files for Firebird SQL Database servers
 Group:			Databases
 # Due to moved files.
 Conflicts:		firebird-server-classic < 2.0
+Requires:		firebird-server = %{version}-%{release}
 Requires(postun):	/usr/sbin/userdel
 Requires(postun):	/usr/sbin/groupdel
 Requires(pre):		/usr/sbin/groupadd
 Requires(pre):		/usr/sbin/useradd
+Requires:		logrotate
 Obsoletes:		%{name}-server-superserver < 2.0.1.12855.0-3mdk
 
 %description		server-common
@@ -278,50 +317,65 @@ firebird-server-superserver. You will need this if you want to use either one.
 
 %files			server-common
 %defattr(0644,root,root,0755)
-%dir %attr(0775,%{name},%{name}) %{fbroot}
-%dir %attr(0775,%{name},%{name}) %{_var}/lib/firebird/backup
-%dir %attr(0775,%{name},%{name}) %{_var}/lib/firebird
-%dir %{fbroot}/UDF
+%doc doc/license/IDPL.txt
+%doc doc/license/README.license.usage.txt
+%doc firebird.mdv.releasenote
+%doc README.urpmi
+%defattr(0644,root,root,0755)
+%dir %attr(0755,root,root) %{_localstatedir}/lib/%{name}
+%dir %attr(0770,%{name},%{name}) %{_localstatedir}/lib/%{name}/data
+%attr(0660,%{name},%{name})	%{_localstatedir}/lib/%{name}/data/employee.fdb
+%dir %attr(0775,%{name},%{name}) %{_localstatedir}/log/%{name}
+%{fbroot}/%{name}.log
 %dir %{fbroot}/intl
-%config %attr (0660,%{name},%{name}) %{fbroot}/security2.fdb
-%config(noreplace) %{fbroot}/aliases.conf
-%config(noreplace) %{fbroot}/firebird.conf
-%config(noreplace) %{fbroot}/intl/fbintl.conf
-%{_sysconfdir}/%{name}/aliases.conf
-%{_sysconfdir}/%{name}/firebird.conf
-%attr(0660,%{name},%{name}) %{fbroot}/firebird.log
+%dir %{_sysconfdir}/%{name}
+%dir %attr(0770,%{name},%{name}) %{_localstatedir}/lib/%{name}/system
+%config(noreplace) %attr (0600,%{name},%{name}) %{_localstatedir}/lib/%{name}/system/security2.fdb
+%{fbroot}/security2.fdb
+%config(noreplace) %attr (0664,%{name},%{name}) %{_sysconfdir}/%{name}/fbintl.conf
+%config(noreplace) %attr (0664,%{name},%{name}) %{_sysconfdir}/%{name}/aliases.conf
+%config(noreplace) %attr (0664,%{name},%{name}) %{_sysconfdir}/%{name}/firebird.conf
+%{fbroot}/aliases.conf
+%{fbroot}/firebird.conf
+%{fbroot}/intl/fbintl.conf
+%config(noreplace) %attr(0644,root,root) %{_sysconfdir}/logrotate.d/%{name}
 %{fbroot}/*.msg
 %{fbroot}/help
-%{fbroot}/UDF/fbudf.so
-%{fbroot}/UDF/fbudf.sql
-%{fbroot}/UDF/ib_udf.so
-%{fbroot}/UDF/ib_udf.sql
-%{fbroot}/UDF/ib_udf2.sql
 %{_libdir}/libib_util.so
-#%{_var}/lib/firebird/backup/no_empty
-#%{_var}/lib/firebird/data/no_empty
-#%{_var}/lib/firebird/system/help.fdb
-#%{_var}/lib/firebird/system/security.fdb
-%defattr(0755,root,root,0755)
-%{_sysconfdir}/profile.d/firebird.csh
-%{_sysconfdir}/profile.d/firebird.sh
+%{fbroot}/lib/libib_util.so
+%defattr(0644,root,root,0644)
+%{fbroot}/UDF/*.sql
+%defattr(0644,root,root,0755)
+%ghost %{fbroot}/UDF/*.so
 %{fbroot}/intl/fbintl
-%{fbroot}/bin/changeDBAPassword.sh
-%{fbroot}/bin/changeRunUser.sh
-%{fbroot}/bin/createAliasDB.sh
-%{fbroot}/bin/fb_config
-%{fbroot}/bin/gdef
-%{fbroot}/bin/gpre
+%dir %attr(0755,%{name},%{name}) %{_var}/run/%{name}
+%defattr(0755,root,root,0755)
+%{_bindir}/gsec
+%{_bindir}/gfix
+%{_bindir}/nbackup
+%{_bindir}/gstat
+%{fbroot}/run
+%{fbroot}/bin/fb_lock_print
 %{fbroot}/bin/gsec
+%{fbroot}/bin/gdef
+%{fbroot}/bin/gfix
+%{fbroot}/bin/gpre
 %{fbroot}/bin/gsplit
+%{fbroot}/bin/gstat
 %{fbroot}/bin/nbackup
-%{fbroot}/bin/restoreRootRunUser.sh
+%{fbroot}/bin/*.sh
+%{fbroot}/bin/fb_config
+
 
 %prep
-%setup -q -n %{pkgname}-%{pkgversion}
+%setup -q -n %{pkgname}
+# convert intl character to UTF-8
+iconv -f ISO-8859-1 -t utf-8 -c ./doc/README.intl -o ./doc/README.intl
 %patch0 -p0
-%patch1 -p0
+%patch1	-p0
 %patch2 -p1
+%patch3 -p0
+%patch4 -p0
 
 # -----------------------------------------------------------------------------
 
@@ -333,70 +387,161 @@ chmod +x ./autogen.sh ./src/misc/writeBuildNum.sh
 # building finish is started at gen/Makefile.codes, line 60 (target
 # build_codes) but I can't do nothing for it without major hacking.
 
-autoreconf -fis
-
-# server-classic
-NOCONFIGURE=1 ./autogen.sh
-%configure --prefix=%{fbroot} --with-system-editline --with-system-icu
+# classic
+./autogen.sh --prefix=%{fbroot} --with-system-editline --with-system-icu
 # Can't use %%make as itsparallel build is broken
 make
 cd gen
 ./install/makeInstallImage.sh
 mv ./buildroot/ buildroot-classic
 chmod 644 ./buildroot-classic%{fbroot}/help/help.fdb
-mkdir ./buildroot-classic%{fbroot}/tools-classic
-for f in changeDBAPassword.sh changeRunUser.sh gdef \
-	gpre gsec restoreRootRunUser.sh; do
-	mv ./buildroot-classic%{fbroot}/{bin,tools-classic}/$f
-	ln -s ../tools/$f ./buildroot-classic%{fbroot}/bin/$f
-done
 cd ..
 
-# server-superserver
-%configure --prefix=%{fbroot} --enable-superserver --with-system-editline --with-system-icu
+# superserver
+make clean
+./autogen.sh --prefix=%{fbroot} --enable-superserver --with-system-editline --with-system-icu
 # Can't use %%make as itsparallel build is broken
 make
 cd gen
 ./install/makeInstallImage.sh
 mv ./buildroot/ buildroot-superserver
 chmod 644 ./buildroot-superserver%{fbroot}/help/help.fdb
-mkdir ./buildroot-superserver%{fbroot}/tools-superserver
-for f in changeDBAPassword.sh changeRunUser.sh gdef \
-	gpre gsec restoreRootRunUser.sh; do
-	mv ./buildroot-superserver%{fbroot}/{bin,tools-superserver}/$f
-done
-cd ..
+
+cd %{_builddir}/%{pkgname}
+sed "s@%%{fbroot}@%{fbroot}@g" %{SOURCE2} > firebird.mdv.releasenote
+
+cat > README.urpmi <<EOF
+You just installed or update %{name} server.
+You can found important informations about mandriva %{name} rpms and database
+management in:
+
+%{_defaultdocdir}/%{name}-server-common/firebird.mdv.releasenote
+
+Please, read it.
+EOF
 
 # -----------------------------------------------------------------------------
 
 %install
-[ "%{buildroot}" != "/" ] && rm -rf %{buildroot}
+# we wanted to setup both Classic and Superserver, we need to do all here
+rm -rf %{buildroot}
+install	-d	%{buildroot}
+cd	%{buildroot}
 
-install -d %{buildroot}
+mkdir	-p	%{buildroot}%{_sysconfdir}/%{name}
+mkdir	-p	%{buildroot}%{_initrddir} 
+mkdir	-p	%{buildroot}%{_sysconfdir}/xinetd.d
+mkdir	-p	%{buildroot}%{_sysconfdir}/profile.d
+mkdir	-p	%{buildroot}%{_sysconfdir}/logrotate.d
+mkdir	-p	%{buildroot}%{_var}/run/%{name}
+mkdir	-p	%{buildroot}%{_localstatedir}/lib/%{name}
+mkdir	-p	%{buildroot}%{_localstatedir}/lib/%{name}/data
+mkdir	-p	%{buildroot}%{_localstatedir}/lib/%{name}/system
+mkdir	-p	%{buildroot}%{_localstatedir}/log/%{name}
+mkdir	-p	%{buildroot}%{_includedir}/%{name}
+mkdir	-p	%{buildroot}%{_libdir}
+mkdir	-p	%{buildroot}%{fbroot}
+mkdir	-p	%{buildroot}%{fbroot}/help
+mkdir	-p	%{buildroot}%{fbroot}/intl
+mkdir	-p	%{buildroot}%{fbroot}/lib
+mkdir	-p	%{buildroot}%{fbroot}/include
+mkdir	-p	%{buildroot}%{fbroot}/bin
+mkdir	-p	%{buildroot}%{fbroot}/UDF
+mkdir	-p	%{buildroot}%{fbroot}/tools
+mkdir	-p	%{buildroot}%{fbroot}/tools-classic
+mkdir	-p	%{buildroot}%{fbroot}/UDF/classic
+mkdir	-p	%{buildroot}%{fbroot}/tools-superserver
+mkdir	-p	%{buildroot}%{fbroot}/UDF/superserver
+mkdir	-p	%{buildroot}%{_bindir} 
 
-# this is fugly and broken...
-cp -a %{_builddir}/%{pkgname}-%{pkgversion}/gen/buildroot-superserver/* \
-	%{buildroot}
-cp -a %{_builddir}/%{pkgname}-%{pkgversion}/gen/buildroot-classic/* \
-	%{buildroot}
+cp	%{_builddir}/%{pkgname}/gen/buildroot-classic%{fbroot}/examples/empbuild/employee.fdb		%{buildroot}%{_localstatedir}/lib/%{name}/data/employee.fdb
+cp	%{_builddir}/%{pkgname}/gen/buildroot-classic%{fbroot}/help/help.fdb		%{buildroot}%{fbroot}/help/help.fdb
+cp	%{_builddir}/%{pkgname}/gen/buildroot-classic%{fbroot}/*.msg		%{buildroot}%{fbroot}/
+cp	%{_builddir}/%{pkgname}/gen/buildroot-classic%{fbroot}/intl/fbintl		%{buildroot}%{fbroot}/intl/fbintl
+cp	%{_builddir}/%{pkgname}/gen/buildroot-classic%{fbroot}/lib/libib_util.so		%{buildroot}%{fbroot}/lib/
+cp	%{_builddir}/%{pkgname}/gen/buildroot-classic%{fbroot}/lib/libfbclient.so.%{major}		%{buildroot}%{fbroot}/lib/
+cp	%{_builddir}/%{pkgname}/gen/buildroot-classic%{fbroot}/lib/libfbembed.so.%{major}		%{buildroot}%{fbroot}/lib/
+for f in fb_inet_server fb_lock_mgr gds_drop; do
+	mv {%{_builddir}/%{pkgname}/gen/buildroot-classic%{fbroot}/bin,%{buildroot}%{fbroot}/bin}/$f
+done	
+cp	%{_builddir}/%{pkgname}/gen/buildroot-classic%{fbroot}/bin/*		%{buildroot}%{fbroot}/tools-classic/
+cp	%{_builddir}/%{pkgname}/gen/buildroot-classic%{fbroot}/UDF/*.so		%{buildroot}%{fbroot}/UDF/classic/
+cp	%{_builddir}/%{pkgname}/gen/buildroot-classic%{fbroot}/UDF/*.so		%{buildroot}%{fbroot}/UDF/
+cp	%{_builddir}/%{pkgname}/gen/buildroot-classic%{fbroot}/UDF/*.sql		%{buildroot}%{fbroot}/UDF/
+for f in fbguard fbmgr.bin fbserver; do
+	mv {%{_builddir}/%{pkgname}/gen/buildroot-superserver%{fbroot}/bin,%{buildroot}%{fbroot}/bin}/$f
+done	
+cp	%{_builddir}/%{pkgname}/gen/buildroot-superserver%{fbroot}/bin/*		%{buildroot}%{fbroot}/tools-superserver/
+cp	%{_builddir}/%{pkgname}/gen/buildroot-superserver%{fbroot}/UDF/*.so		%{buildroot}%{fbroot}/UDF/superserver/
 
-cd %{buildroot}
-mkdir -p .%{_sysconfdir}/%{name}
-mkdir -p .%{_sysconfdir}/rc.d/init.d/
-mkdir -p .%{_sysconfdir}/xinetd.d
-mkdir -p .%{_sysconfdir}/profile.d
-mkdir -p .%{_var}/run/%{name}
-ln -s %{fbroot}/aliases.conf .%{_sysconfdir}/%{name}/
-ln -s %{fbroot}/firebird.conf .%{_sysconfdir}/%{name}/
-ln -s fbmgr.bin .%{fbroot}/bin/fbmgr
-mv .%{fbroot}/misc/%{name}.xinetd .%{_sysconfdir}/xinetd.d/%{name}
-mv .%{fbroot}/misc/%{name}.init.d.mandrake .%{_sysconfdir}/rc.d/init.d/%{name}
-rm -rf .%{fbroot}/misc
-sed "s@%%{fbroot}@%{fbroot}@g" %{_sourcedir}/firebird-2.0.0-profile.sh > .%{_sysconfdir}/profile.d/firebird.sh
-sed "s@%%{fbroot}@%{fbroot}@g" %{_sourcedir}/firebird-2.0.0-profile.csh > .%{_sysconfdir}/profile.d/firebird.csh
-touch .%{fbroot}/firebird.log
+cd	%{buildroot}%{fbroot}/bin
+ln	-s	fbmgr.bin	fbmgr
+for f in $(ls -1 %{buildroot}%{fbroot}/tools-superserver);do
+	ln -s %{fbroot}/tools/$f $f
+done	
+cd	%{buildroot}
 
-mkdir -p %{buildroot}%{_var}/lib/firebird/backup
+major2=`echo %{major} | sed 's|\.[0-9]*$||'`
+major1=`echo ${major2} | sed 's|\.[0-9]*$||'`
+cd	%{buildroot}%{fbroot}/lib/
+ln	-s	%{fbroot}/lib/libfbembed.so.%{major}	libfbembed.so.${major2}
+ln	-s	%{fbroot}/lib/libfbembed.so.${major2}	libfbembed.so
+ln	-s	%{fbroot}/lib/libfbclient.so.%{major}	libfbclient.so.${major1}
+ln	-s	%{fbroot}/lib/libfbclient.so.${major1}	libfbclient.so
+cd	%{buildroot}
+
+cd	%{buildroot}%{_libdir}
+ln	-s	%{fbroot}/lib/libfbembed.so	libfbembed.so
+ln	-s	%{fbroot}/lib/libfbembed.so.${major2}	libfbembed.so.${major2}
+ln	-s	%{fbroot}/lib/libfbembed.so.%{major}	libfbembed.so.%{major}
+ln	-s	%{fbroot}/lib/libfbclient.so	libfbclient.so
+ln	-s	%{fbroot}/lib/libfbclient.so.${major1}	libfbclient.so.${major1}
+ln	-s	%{fbroot}/lib/libfbclient.so.%{major}	libfbclient.so.%{major}
+ln	-s	%{fbroot}/lib/libfbclient.so.%{major}	libgds.so.0
+ln	-s	%{fbroot}/lib/libfbclient.so	libgds.so
+ln	-s	%{fbroot}/lib/libib_util.so	libib_util.so
+cd	%{buildroot}
+
+ln	-sf	%{_localstatedir}/log/%{name}/%{name}.log	.%{fbroot}/%{name}.log	
+sed	"s@%{name}.log@%{_localstatedir}/log/%{name}/%{name}.log@g"	%{SOURCE1}	>	%{buildroot}%{_sysconfdir}/logrotate.d/%{name}
+
+cp	%{_builddir}/%{pkgname}/gen/buildroot-classic%{fbroot}/include/*		%{buildroot}%{_includedir}/%{name}/
+cd	%{buildroot}%{fbroot}/include/
+ln	-s	%{_includedir}/%{name}/ibase.h	ibase.h
+ln	-s	%{_includedir}/%{name}/iberror.h	iberror.h
+ln	-s	%{_includedir}/%{name}/ib_util.h	ib_util.h
+ln	-s	%{_includedir}/%{name}/perf.h	perf.h
+cd	%{buildroot}%{_includedir}
+ln	-s	%{_includedir}/%{name}/ibase.h	ibase.h
+ln	-s	%{_includedir}/%{name}/iberror.h	iberror.h
+ln	-s	%{_includedir}/%{name}/ib_util.h	ib_util.h
+ln	-s	%{_includedir}/%{name}/perf.h	perf.h
+cd	%{buildroot}
+
+cp	%{_builddir}/%{pkgname}/gen/buildroot-classic%{fbroot}/aliases.conf	.%{_sysconfdir}/%{name}/aliases.conf
+sed	"s@%{fbroot}/examples/empbuild@%{_localstatedir}/lib/%{name}/data@"	-i	.%{_sysconfdir}/%{name}/aliases.conf	
+cp	%{_builddir}/%{pkgname}/gen/buildroot-classic%{fbroot}/firebird.conf	.%{_sysconfdir}/%{name}/firebird.conf
+cp	%{_builddir}/%{pkgname}/gen/buildroot-classic%{fbroot}/intl/fbintl.conf	.%{_sysconfdir}/%{name}/fbintl.conf
+cp	%{_builddir}/%{pkgname}/gen/buildroot-classic%{fbroot}/security2.fdb	.%{_localstatedir}/lib/%{name}/system/security2.fdb
+
+ln	-s	%{_sysconfdir}/%{name}/aliases.conf	.%{fbroot}/aliases.conf
+ln	-s	%{_sysconfdir}/%{name}/firebird.conf	.%{fbroot}/firebird.conf
+ln	-s	%{_localstatedir}/lib/%{name}/system/security2.fdb	.%{fbroot}/security2.fdb
+ln	-s	%{_sysconfdir}/%{name}/fbintl.conf	.%{fbroot}/intl/fbintl.conf
+
+sed	"s@= root@= %{name}@"	%{_builddir}/%{pkgname}/gen/buildroot-classic%{fbroot}/misc/%{name}.xinetd	>	%{buildroot}%{_sysconfdir}/xinetd.d/%{name}
+cp	%{_builddir}/%{pkgname}/gen/buildroot-superserver%{fbroot}/misc/%{name}.init.d.mandrake	%{buildroot}%{_initrddir}/%{name}
+
+ln	-s	%{_var}/run/%{name}	.%{fbroot}/run
+ln	-s	%{fbroot}/bin/isql	.%{_bindir}/isql-fb
+ln	-s	%{fbroot}/bin/gbak	.%{_bindir}/gbak
+ln	-s	%{fbroot}/bin/gfix	.%{_bindir}/gfix
+ln	-s	%{fbroot}/bin/gsec	.%{_bindir}/gsec
+ln	-s	%{fbroot}/bin/nbackup	.%{_bindir}/nbackup
+ln	-s	%{fbroot}/bin/gstat	.%{_bindir}/gstat
+ln	-s	%{fbroot}/bin/fbsvcmgr	.%{_bindir}/fbsvcmgr
+ln	-s	%{fbroot}/bin/qli	.%{_bindir}/qli
+
 
 # -----------------------------------------------------------------------------
 
@@ -420,48 +565,41 @@ rm -rf %{buildroot}
 %postun -n %libfbembed -p /sbin/ldconfig
 %endif
 
-%post server-classic
-if test ! -e %{fbroot}/tools; then
-	ln -s %{fbroot}/tools{-classic,}
-fi
-if /sbin/service xinetd status >& /dev/null; then
-	/sbin/service xinetd reload
-fi
-if [ ! -f /etc/gds_hosts.equiv ]; then
-	echo localhost > /etc/gds_hosts.equiv
-fi
+%post	server-classic
+type=classic
+for dir in tools;do
+	[ -e %{fbroot}/$dir ] || rm -rf %{fbroot}/$dir
+	ln -sf $dir-$type %{fbroot}/$dir
+done 
+for f in $(ls 1 %{fbroot}/UDF/$type/);do
+	cp -f %{fbroot}/UDF/$type/$f %{fbroot}/UDF/$f
+done
 
-
-%preun server-classic
+%preun	server-classic
 if [ $1 -eq 0 ]; then
 	if /sbin/service xinetd status >& /dev/null; then
-		/sbin/service xinetd reload
-	fi
-	if [ "$(readlink %{fbroot}/tools 2> /dev/null)" == "%{fbroot}/tools-classic" ]; then
-		rm -f %{fbroot}/tools
+		/sbin/service xinetd reload &>/dev/null || :
 	fi
 fi
 
-# -----------------------------------------------------------------------------
 
 # -----------------------------------------------------------------------------
-# server-superserver scripts
+# superserver scripts
 # -----------------------------------------------------------------------------
-%post server-superserver
-if test ! -e %{fbroot}/tools; then
-	ln -s %{fbroot}/tools{-superserver,}
-fi
-if [ $1 -eq 2 ]; then
-	if /sbin/service firebird status >& /dev/null; then
-		/sbin/service firebird restart
-	fi
-fi
-if [ $1 -eq 1 ]; then
-	chkconfig firebird off
-fi
+%post	server-superserver
+type=superserver
+for dir in tools;do
+	[ -e %{fbroot}/$dir ] || rm -rf %{fbroot}/$dir
+	ln -sf $dir-$type %{fbroot}/$dir
+done
+for f in $(ls 1 %{fbroot}/UDF/$type/);do
+	cp -f %{fbroot}/UDF/$type/$f %{fbroot}/UDF/$f
+done
+
 if [ ! -f /etc/gds_hosts.equiv ]; then
 	echo localhost > /etc/gds_hosts.equiv
 fi
+%_post_service %{name}
 
 %preun server-superserver
 if [ $1 -eq 0 ]; then
@@ -469,18 +607,16 @@ if [ $1 -eq 0 ]; then
 		/sbin/service firebird stop
 	fi
 	chkconfig --del firebird
-	if [ "$(readlink %{fbroot}/tools >& /dev/null)" == "%{fbroot}/tools-superserver" ]; then
-		rm -f %{fbroot}/tools
-	fi
 fi
+%_preun_service %{name} 
 
 # -----------------------------------------------------------------------------
 # server-common scripts
 # -----------------------------------------------------------------------------
 %pre server-common
 # Create the firebird group if it doesn't exist
-grep -q %{name} /etc/group || /usr/sbin/groupadd -r %{name} || true
-grep -q %{name} /etc/passwd || /usr/sbin/useradd -d / -g %{name} -s /sbin/sh -r %{name} || true
+getent group %{name} || /usr/sbin/groupadd -r %{name}
+getent passwd %{name} >/dev/null || /usr/sbin/useradd -d %{fbroot} -g %{name} -s /sbin/nologin -r %{name} 
 
 # Add gds_db to /etc/services if needed
 FileName=/etc/services
@@ -491,10 +627,14 @@ if [ -z "$oldLine" ]; then
 fi
 
 %if %mdkversion < 200900
-%post server-common -p /sbin/ldconfig
+%post -p /sbin/ldconfig
 %endif
 %if %mdkversion < 200900
-%postun server-common -p /sbin/ldconfig
+%postun -p /sbin/ldconfig
+rm -Rf	%{_var}/run/%{name}
 %endif
-
+%if %mdkversion  >= 200910
+%postun
+rm -Rf	%{_var}/run/%{name}
+%endif
 
