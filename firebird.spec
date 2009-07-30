@@ -328,6 +328,8 @@ firebird-server-superserver. You will need this if you want to use either one.
 %dir %attr(0775,%{name},%{name}) %{_localstatedir}/log/%{name}
 %{fbroot}/%{name}.log
 %dir %{fbroot}/intl
+%ghost %{fbroot}/tools
+%dir %{fbroot}/UDF
 %dir %{_sysconfdir}/%{name}
 %dir %attr(0770,%{name},%{name}) %{_localstatedir}/lib/%{name}/system
 %config(noreplace) %attr (0600,%{name},%{name}) %{_localstatedir}/lib/%{name}/system/security2.fdb
@@ -388,7 +390,8 @@ chmod +x ./autogen.sh ./src/misc/writeBuildNum.sh
 # build_codes) but I can't do nothing for it without major hacking.
 
 # classic
-./autogen.sh --prefix=%{fbroot} --with-system-editline --with-system-icu
+NOCONFIGURE=1 ./autogen.sh
+%configure --prefix=%{fbroot} --with-system-editline --with-system-icu
 # Can't use %%make as itsparallel build is broken
 make
 cd gen
@@ -399,7 +402,8 @@ cd ..
 
 # superserver
 make clean
-./autogen.sh --prefix=%{fbroot} --enable-superserver --with-system-editline --with-system-icu
+NOCONFIGURE=1 ./autogen.sh
+%configure --prefix=%{fbroot} --enable-superserver --with-system-editline --with-system-icu
 # Can't use %%make as itsparallel build is broken
 make
 cd gen
@@ -568,7 +572,7 @@ rm -rf %{buildroot}
 %post	server-classic
 type=classic
 for dir in tools;do
-	[ -e %{fbroot}/$dir ] || rm -rf %{fbroot}/$dir
+	[ -L %{fbroot}/$dir ] || rm -rf %{fbroot}/$dir
 	ln -sf $dir-$type %{fbroot}/$dir
 done 
 for f in $(ls 1 %{fbroot}/UDF/$type/);do
@@ -589,7 +593,7 @@ fi
 %post	server-superserver
 type=superserver
 for dir in tools;do
-	[ -e %{fbroot}/$dir ] || rm -rf %{fbroot}/$dir
+	[ -L %{fbroot}/$dir ] || rm -rf %{fbroot}/$dir
 	ln -sf $dir-$type %{fbroot}/$dir
 done
 for f in $(ls 1 %{fbroot}/UDF/$type/);do
@@ -614,10 +618,9 @@ fi
 # server-common scripts
 # -----------------------------------------------------------------------------
 %pre server-common
-# Create the firebird group if it doesn't exist
-getent group %{name} || /usr/sbin/groupadd -r %{name}
-getent passwd %{name} >/dev/null || /usr/sbin/useradd -d %{fbroot} -g %{name} -s /sbin/nologin -r %{name} 
-
+# Create the firebird user and group if it doesn't exist
+%_pre_groupadd %{name}
+%_pre_useradd %{name} %{_localstatedir}/lib/%{name}/data /sbin/nologin
 # Add gds_db to /etc/services if needed
 FileName=/etc/services
 newLine="gds_db          3050/tcp  # Firebird SQL Database Remote Protocol"
@@ -625,6 +628,10 @@ oldLine=`grep "^gds_db" $FileName`
 if [ -z "$oldLine" ]; then
 	echo $newLine >> $FileName
 fi
+
+%preun server-common
+%_post_userdel %{name}
+%_postun_groupdel %{name}
 
 %if %mdkversion < 200900
 %post -p /sbin/ldconfig
