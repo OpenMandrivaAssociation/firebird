@@ -638,10 +638,5 @@ fi
 %endif
 %if %mdkversion < 200900
 %postun -p /sbin/ldconfig
-rm -Rf	%{_var}/run/%{name}
-%endif
-%if %mdkversion  >= 200910
-%postun
-rm -Rf	%{_var}/run/%{name}
 %endif
 
