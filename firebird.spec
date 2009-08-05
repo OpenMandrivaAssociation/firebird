@@ -355,7 +355,7 @@ firebird-server-superserver. You will need this if you want to use either one.
 %{_bindir}/gsec
 %{_bindir}/gfix
 %{_bindir}/nbackup
-%{_bindir}/gstat
+%{_bindir}/gstat-fb
 %{fbroot}/run
 %{fbroot}/bin/fb_lock_print
 %{fbroot}/bin/gsec
@@ -542,7 +542,7 @@ ln	-s	%{fbroot}/bin/gbak	.%{_bindir}/gbak
 ln	-s	%{fbroot}/bin/gfix	.%{_bindir}/gfix
 ln	-s	%{fbroot}/bin/gsec	.%{_bindir}/gsec
 ln	-s	%{fbroot}/bin/nbackup	.%{_bindir}/nbackup
-ln	-s	%{fbroot}/bin/gstat	.%{_bindir}/gstat
+ln	-s	%{fbroot}/bin/gstat	.%{_bindir}/gstat-fb
 ln	-s	%{fbroot}/bin/fbsvcmgr	.%{_bindir}/fbsvcmgr
 ln	-s	%{fbroot}/bin/qli	.%{_bindir}/qli
 
