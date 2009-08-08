@@ -14,7 +14,7 @@
 Summary:	Firebird SQL database management system
 Name:		firebird
 Version:	%{version}
-Release:	%mkrel 1
+Release:	%mkrel 2
 Group:		Databases
 License:	IPL
 URL:		http://www.firebirdsql.org/
@@ -239,7 +239,7 @@ multi-threaded client library.
 %config(noreplace) %{_sysconfdir}/xinetd.d/%{name}
 %defattr(0755,root,root,0755)
 %{fbroot}/bin/fb_inet_server
-%{fbroot}/bin/fb_lock_mgr
+%attr(6550,root,firebird) %{fbroot}/bin/fb_lock_mgr
 %{fbroot}/bin/gds_drop
 %{fbroot}/tools-classic/fb_lock_print
 %{fbroot}/tools-classic/gsec
