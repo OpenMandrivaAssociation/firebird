@@ -619,7 +619,6 @@ fi
 # -----------------------------------------------------------------------------
 %pre server-common
 # Create the firebird user and group if it doesn't exist
-%_pre_groupadd %{name}
 %_pre_useradd %{name} %{_localstatedir}/lib/%{name}/data /sbin/nologin
 # Add gds_db to /etc/services if needed
 FileName=/etc/services
@@ -631,7 +630,6 @@ fi
 
 %preun server-common
 %_post_userdel %{name}
-%_postun_groupdel %{name}
 
 %if %mdkversion < 200900
 %post -p /sbin/ldconfig
