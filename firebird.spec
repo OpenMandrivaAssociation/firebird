@@ -14,7 +14,7 @@
 Summary:	Firebird SQL database management system
 Name:		firebird
 Version:	%{version}
-Release:	%mkrel 2
+Release:	%mkrel 3
 Group:		Databases
 License:	IPL
 URL:		http://www.firebirdsql.org/
