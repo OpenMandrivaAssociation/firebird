@@ -14,7 +14,7 @@
 Summary:	Firebird SQL database management system
 Name:		firebird
 Version:	%{version}
-Release:	%mkrel 4
+Release:	%mkrel 5
 Group:		Databases
 License:	IPL
 URL:		http://www.firebirdsql.org/
@@ -222,7 +222,9 @@ Provides:	firebird-server = %{version}-%{release}
 Requires:	xinetd
 Requires:	%{name}-server-common = %{version}
 Conflicts:	%{name}-server-superserver
-Requires(pre):       %{name}-server-common = %{version}
+Requires(pre):  %{name}-server-common = %{version}
+Requires(pre):  /usr/sbin/groupadd
+Requires(pre):  /usr/sbin/useradd
 
 %description	server-classic
 This is the classic (xinetd) server for the Firebird SQL Database.
@@ -331,6 +333,7 @@ firebird-server-superserver. You will need this if you want to use either one.
 %dir %{fbroot}/intl
 %ghost %{fbroot}/tools
 %dir %{fbroot}/UDF
+%dir %{fbroot}/bin
 %dir %{_sysconfdir}/%{name}
 %dir %attr(0770,%{name},%{name}) %{_localstatedir}/lib/%{name}/system
 %config(noreplace) %attr (0600,%{name},%{name}) %{_localstatedir}/lib/%{name}/system/security2.fdb
@@ -570,14 +573,23 @@ rm -rf %{buildroot}
 %postun -n %libfbembed -p /sbin/ldconfig
 %endif
 
+#-----------------------------------------------------------------------------
+# to bypass the rpm possible bug that don't do pre server-common
+#----------------------------------------------------------------------------
+%pre	server-classic
+%_pre_useradd %{name} %{_localstatedir}/lib/%{name}/data /sbin/nologin
+
+# -----------------------------------------------------------------------------
+# classic server scripts
+# -----------------------------------------------------------------------------
 %post	server-classic
 type=classic
 for dir in tools;do
 	[ -L %{fbroot}/$dir ] || rm -rf %{fbroot}/$dir
 	ln -sf $dir-$type %{fbroot}/$dir
 done 
-for f in $(ls 1 %{fbroot}/UDF/$type/);do
-	cp -f %{fbroot}/UDF/$type/$f %{fbroot}/UDF/$f
+for f in $(ls -1 %{fbroot}/UDF/$type/);do
+	ln -f %{fbroot}/UDF/$type/$f %{fbroot}/UDF/$f  
 done
 
 %preun	server-classic
@@ -597,8 +609,8 @@ for dir in tools;do
 	[ -L %{fbroot}/$dir ] || rm -rf %{fbroot}/$dir
 	ln -sf $dir-$type %{fbroot}/$dir
 done
-for f in $(ls 1 %{fbroot}/UDF/$type/);do
-	cp -f %{fbroot}/UDF/$type/$f %{fbroot}/UDF/$f
+for f in $(ls -1 %{fbroot}/UDF/$type/);do
+	ln -f %{fbroot}/UDF/$type/$f %{fbroot}/UDF/$f
 done
 
 if [ ! -f /etc/gds_hosts.equiv ]; then
@@ -629,7 +641,7 @@ if [ -z "$oldLine" ]; then
 	echo $newLine >> $FileName
 fi
 
-%preun server-common
+%postun server-common
 %_post_userdel %{name}
 
 %if %mdkversion < 200900
