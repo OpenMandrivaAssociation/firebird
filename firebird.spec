@@ -14,7 +14,7 @@
 Summary:	Firebird SQL database management system
 Name:		firebird
 Version:	%{version}
-Release:	%mkrel 3
+Release:	%mkrel 4
 Group:		Databases
 License:	IPL
 URL:		http://www.firebirdsql.org/
@@ -222,6 +222,7 @@ Provides:	firebird-server = %{version}-%{release}
 Requires:	xinetd
 Requires:	%{name}-server-common = %{version}
 Conflicts:	%{name}-server-superserver
+Requires(pre):       %{name}-server-common = %{version}
 
 %description	server-classic
 This is the classic (xinetd) server for the Firebird SQL Database.
@@ -239,7 +240,7 @@ multi-threaded client library.
 %config(noreplace) %{_sysconfdir}/xinetd.d/%{name}
 %defattr(0755,root,root,0755)
 %{fbroot}/bin/fb_inet_server
-%attr(6550,root,firebird) %{fbroot}/bin/fb_lock_mgr
+%attr(6550,root,%{name}) %{fbroot}/bin/fb_lock_mgr
 %{fbroot}/bin/gds_drop
 %{fbroot}/tools-classic/fb_lock_print
 %{fbroot}/tools-classic/gsec
@@ -263,6 +264,7 @@ Group:		Databases
 Provides:	firebird-server = %{version}-%{release}
 Requires:	%{name}-server-common = %{version}-%{release}
 Conflicts:	%{name}-server-classic
+Requires(pre):       %{name}-server-common = %{version}
 
 %description	server-superserver
 This is the Superserver (single process) for the Firebird SQL Database.
@@ -272,7 +274,6 @@ multi-threaded client library.
 
 %files		server-superserver
 %defattr(0644,root,root,0755)
-%dir %attr(0775,%{name},%{name}) %{_var}/run/%{name}
 %dir %{fbroot}/bin
 %dir %{fbroot}/tools-superserver
 %dir %{fbroot}/UDF/superserver
@@ -350,7 +351,7 @@ firebird-server-superserver. You will need this if you want to use either one.
 %defattr(0644,root,root,0755)
 %ghost %{fbroot}/UDF/*.so
 %{fbroot}/intl/fbintl
-%dir %attr(0755,%{name},%{name}) %{_var}/run/%{name}
+%dir %attr(0775,%{name},%{name}) %{_var}/run/%{name}
 %defattr(0755,root,root,0755)
 %{_bindir}/gsec
 %{_bindir}/gfix
