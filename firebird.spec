@@ -14,12 +14,11 @@
 Summary:	Firebird SQL database management system
 Name:		firebird
 Version:	%{version}
-Release:	%mkrel 5
+Release:	%mkrel 6
 Group:		Databases
 License:	IPL
 URL:		http://www.firebirdsql.org/
-#Source0:	http://downloads.sourceforge.net/firebird/%{pkgname}.tar.bz2
-Source0:	http://firebirdsql.org/downloads/prerelease/source/%{pkgname}.RC2.tar.bz2
+Source0:	http://downloads.sourceforge.net/firebird/%{pkgname}.tar.bz2
 Source1:	firebird-logrotate
 Source2:	firebird.mdv.releasenote
 Patch0:		firebird-mcpu-to-mtune.patch
@@ -27,6 +26,7 @@ Patch1:		firebird.init.d.mandrake.in.patch
 Patch2:		Firebird-edit_fix.diff
 Patch3:		firebird_lock-file-location.patch
 Patch4:		firebird-gcc-icu.patch
+Patch5:		firebird-gsec.patch
 BuildRequires:	autoconf
 BuildRequires:	automake
 BuildRequires:	bison
@@ -101,9 +101,12 @@ Development libraries for firebird.
 %defattr(0644,root,root,0755)
 %dir %{fbroot}/include
 %{fbroot}/include/*
-%{fbroot}/lib/*.so
+%{fbroot}/lib/libfbclient.so
+%{fbroot}/lib/libfbembed.so
 %{_includedir}/*
-%{_libdir}/*.so
+%{_libdir}/libfbclient.so
+%{_libdir}/libfbembed.so
+%{_libdir}/libgds.so
 
 #
 # Standard client programs
@@ -195,6 +198,8 @@ Multi-threaded, non-local client libraries for Firebird SQL Database
 %{_libdir}/libfbclient.so.*
 %{_libdir}/libgds.so.0
 %{fbroot}/lib/libfbclient.so.*
+%{_libdir}/libib_util.so
+%{fbroot}/lib/libib_util.so
 
 #
 # Multi-process, independant client libraries
@@ -347,8 +352,6 @@ firebird-server-superserver. You will need this if you want to use either one.
 %config(noreplace) %attr(0644,root,root) %{_sysconfdir}/logrotate.d/%{name}
 %{fbroot}/*.msg
 %{fbroot}/help
-%{_libdir}/libib_util.so
-%{fbroot}/lib/libib_util.so
 %defattr(0644,root,root,0644)
 %{fbroot}/UDF/*.sql
 %defattr(0644,root,root,0755)
@@ -382,6 +385,7 @@ iconv -f ISO-8859-1 -t utf-8 -c ./doc/README.intl -o ./doc/README.intl
 %patch2 -p1
 %patch3 -p0
 %patch4 -p0
+%patch5 -p0
 
 # -----------------------------------------------------------------------------
 
