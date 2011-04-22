@@ -14,13 +14,16 @@
 Summary:	Firebird SQL database management system
 Name:		firebird
 Version:	%{version}
-Release:	%mkrel 1
+Release:	%mkrel 2
 Group:		Databases
 License:	IPL
 URL:		http://www.firebirdsql.org/
 Source0:	http://downloads.sourceforge.net/firebird/%{pkgname}.tar.bz2
 Source1:	firebird-logrotate
 Source2:	firebird.mdv.releasenote
+# from upstream
+Patch0:         firebird-2.5.0-svn-CORE-3447.patch
+
 BuildRequires:	autoconf
 BuildRequires:	automake
 BuildRequires:	bison
@@ -355,6 +358,7 @@ firebird-server-superserver. You will need this if you want to use either one.
 
 %prep
 %setup -q -n %{pkgname}
+%patch0
 # convert intl character to UTF-8
 iconv -f ISO-8859-1 -t utf-8 -c ./doc/README.intl -o ./doc/README.intl
 
