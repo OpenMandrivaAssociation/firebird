@@ -2,9 +2,9 @@
 %define Werror_cflags %{nil}
 %endif
 
-%define	major 2.5.0
-%define pkgname Firebird-2.5.0.26074-0
-%define version 2.5.0.26074.0
+%define	major 2.5.1
+%define pkgname Firebird-2.5.1.26351-0
+%define version 2.5.1.26351.0
 %define somajor 2
 %define libfbclient %mklibname fbclient %somajor
 %define libfbembed %mklibname fbembed %somajor
@@ -14,7 +14,7 @@
 Summary:	Firebird SQL database management system
 Name:		firebird
 Version:	%{version}
-Release:	%mkrel 3
+Release:	%mkrel 1
 Group:		Databases
 License:	IPL
 URL:		http://www.firebirdsql.org/
@@ -22,7 +22,7 @@ Source0:	http://downloads.sourceforge.net/firebird/%{pkgname}.tar.bz2
 Source1:	firebird-logrotate
 Source2:	firebird.mdv.releasenote
 # from upstream
-Patch0:         firebird-2.5.0-svn-CORE-3447.patch
+Patch0:         firebird-2.5.1-svn-CORE-3610.patch
 
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -549,6 +549,12 @@ if [ "$(readlink %{fbroot}/bin 2> /dev/null)" \!= "%{fbroot}/bin-classic" ]; the
  ln -s %{fbroot}/bin{-classic,}
 fi
 
+%post   utils-classic
+if [ "$(readlink %{fbroot}/bin 2> /dev/null)" \!= "%{fbroot}/bin-classic" ]; then
+  [ -e %{fbroot}/bin ] && rm -f %{fbroot}/bin
+  ln -s %{fbroot}/bin{-classic,}
+fi
+
 %preun	classic
 if [ $1 -eq 0 ]; then
 	if /sbin/service xinetd status >& /dev/null; then
@@ -560,6 +566,13 @@ fi
 if [ $1 -eq 0 ]; then
  if [ "$(readlink %{fbroot}/bin 2> /dev/null)" = "%{fbroot}/bin-classic" ]; then
   rm -f %{fbroot}/bin
+ fi
+fi
+
+%preun utils-classic
+if [ $1 -eq 0 ]; then
+ if [ "$(readlink %{fbroot}/bin 2> /dev/null)" = "%{fbroot}/bin-classic" ]; then
+ rm -f %{fbroot}/bin
  fi
 fi
 
@@ -597,6 +610,12 @@ if [ ! -f /etc/gds_hosts.equiv ]; then
 	echo localhost > /etc/gds_hosts.equiv
 fi
 %_post_service %{name}-superserver
+
+%post   utils-superserver
+if [ "$(readlink %{fbroot}/bin 2> /dev/null)" \!= "%{fbroot}/bin-superserver" ]; then
+ [ -e %{fbroot}/bin ] && rm -f %{fbroot}/bin
+ ln -s %{fbroot}/bin{-superserver,}
+fi
 
 %preun server-superserver
 if [ $1 -eq 0 ]; then
