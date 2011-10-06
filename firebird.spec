@@ -382,6 +382,8 @@ NOCONFIGURE=1 ./autogen.sh
  --with-fbmisc=%{fbroot}/misc --with-fbsecure-db=%{_localstatedir}/lib/%{name}/system \
  --with-fbmsg=%{_localstatedir}/lib/%{name}/system --with-fblog=%{_localstatedir}/log/%{name} \
  --with-fbglock=%{_var}/run/%{name} --with-fbplugins=%{fbroot}/plugins-classic
+FIREBIRD=%{_builddir}/%{pkgname}/gen/firebird
+export FIREBIRD
 # Can't use %%make as itsparallel build is broken
 make
 cd gen
