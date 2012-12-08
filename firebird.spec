@@ -1,6 +1,4 @@
-%if %mdkversion >= 200910
 %define Werror_cflags %{nil}
-%endif
 
 %define	major 2.5.1
 %define pkgname Firebird-2.5.1.26351-0
@@ -14,7 +12,7 @@
 Summary:	Firebird SQL database management system
 Name:		firebird
 Version:	%{version}
-Release:	%mkrel 1
+Release:	3
 Group:		Databases
 License:	IPL
 URL:		http://www.firebirdsql.org/
@@ -28,8 +26,8 @@ BuildRequires:	autoconf
 BuildRequires:	automake
 BuildRequires:	bison
 BuildRequires:	libtool
-BuildRequires:  libncurses-devel
-BuildRequires:  libtermcap-devel
+BuildRequires:  pkgconfig(ncurses)
+BuildRequires:  termcap-devel
 BuildRequires:  icu-devel
 BuildRequires:  edit-devel
 BuildRequires:	gcc-c++
@@ -37,7 +35,6 @@ BuildRequires:	libstdc++-static-devel
 Requires:	%{name}-arch = %{version}-%{release}
 Requires:	grep
 Requires:	sed
-BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 
 %description
 This is the Firebird SQL Database shared files.
@@ -82,6 +79,7 @@ Requires:	%{name}-utils-classic = %{version}
 # Yes, we need force this. Otherwise, only direct local access wil be available.
 Requires:	%libfbclient
 Requires:	%libfbembed
+Requires(pre):  rpm-helper
 Conflicts:	%{name}-superserver
 Conflicts:	%{name}-classic
 
@@ -238,9 +236,11 @@ Conflicts:	%{name}-server-superserver
 Requires(pre):  %{name}-server-common = %{version}
 Requires(pre):  /usr/sbin/groupadd
 Requires(pre):  /usr/sbin/useradd
+Requires(pre):  rpm-helper
 
 %description	server-classic
-This package contains the command line utilities and files common to classic and superclassic Firebird servers.
+This package contains the command line utilities and files common
+to classic and superclassic Firebird servers.
 
 %files		server-classic
 %dir %{fbroot}/bin-classic
@@ -269,6 +269,7 @@ Requires:	%{name}-server-common = %{version}-%{release}
 Conflicts:	%{name}-server-classic
 Conflicts:	%{name}-server-superclassic
 Requires(pre):       %{name}-server-common = %{version}
+Requires(pre):  rpm-helper
 
 %description	server-superserver
 This is the Superserver (single process) for the Firebird SQL Database.
@@ -307,6 +308,7 @@ Requires(postun):	/usr/sbin/groupdel
 Requires(pre):		/usr/sbin/groupadd
 Requires(pre):		/usr/sbin/useradd
 Requires:		logrotate
+Requires(pre):  	rpm-helper
 Obsoletes:		%{name}-server-superserver < 2.0.1.12855.0-3mdk
 
 %description		server-common
@@ -338,7 +340,7 @@ firebird-server-superserver. You will need this if you want to use either one.
 %{fbroot}/intl/fbintl.conf
 %config(noreplace) %attr(0664,%{name},%{name})  %{_localstatedir}/log/%{name}/%{name}.log
 %config(noreplace) %attr(0644,root,root) %{_sysconfdir}/logrotate.d/%{name}
-%{_libdir}/libib_util.so
+%attr(0755,root,root) %{_libdir}/libib_util.so
 %defattr(0755,root,root,0750)
 %{fbroot}/intl/fbintl
 %defattr(0755,root,root,0755)
@@ -350,7 +352,6 @@ firebird-server-superserver. You will need this if you want to use either one.
 %{_bindir}/gdef
 %{_bindir}/gsplit
 %{_bindir}/fb_config
-%{_bindir}/fbtracemgr
 %{_sbindir}/fbguard
 %{_sbindir}/fb_lock_print
 %dir %attr(0775,%{name},%{name}) %{_var}/run/%{name}
@@ -382,8 +383,6 @@ NOCONFIGURE=1 ./autogen.sh
  --with-fbmisc=%{fbroot}/misc --with-fbsecure-db=%{_localstatedir}/lib/%{name}/system \
  --with-fbmsg=%{_localstatedir}/lib/%{name}/system --with-fblog=%{_localstatedir}/log/%{name} \
  --with-fbglock=%{_var}/run/%{name} --with-fbplugins=%{fbroot}/plugins-classic
-FIREBIRD=%{_builddir}/%{pkgname}/gen/firebird
-export FIREBIRD
 # Can't use %%make as itsparallel build is broken
 make
 cd gen
@@ -654,4 +653,208 @@ fi
 %if %mdkversion < 200900
 %postun -p /sbin/ldconfig
 %endif
+
+
+
+%changelog
+* Wed Oct 05 2011 Phillipe Makowski <makowski@mandriva.org> 2.5.1.26351.0-1mdv2012.0
++ Revision: 703133
+- new upstream (bugs fixes)
+
+* Sun Jun 05 2011 Funda Wang <fwang@mandriva.org> 2.5.0.26074.0-3
++ Revision: 682810
+- rebuild for new icu
+
+* Fri Apr 22 2011 Phillipe Makowski <makowski@mandriva.org> 2.5.0.26074.0-2
++ Revision: 656655
+- Fix rh #697313 with backport mainstream patch CORE-3447 (icu > 4.2)
+
+* Mon Mar 14 2011 Funda Wang <fwang@mandriva.org> 2.5.0.26074.0-1
++ Revision: 644582
+- rebuild for new icu
+
+* Wed Dec 22 2010 Phillipe Makowski <makowski@mandriva.org> 2.5.0.26074.0-0mdv2011.0
++ Revision: 623855
+- new upstream
+- new upstream
+
+* Sun Dec 05 2010 Oden Eriksson <oeriksson@mandriva.com> 2.1.3.18185.0-7mdv2011.0
++ Revision: 610426
+- rebuild
+
+* Wed Mar 24 2010 Phillipe Makowski <makowski@mandriva.org> 2.1.3.18185.0-6mdv2010.1
++ Revision: 527170
+- build with last upstream
+- Fix rh #563461
+- Fix mdv #58305
+
+* Tue Aug 11 2009 Phillipe Makowski <makowski@mandriva.org> 2.1.3.18185.0-5mdv2010.0
++ Revision: 415207
+- fix post and pre\
+- make sure that firebird user is created for classic
+
+* Tue Aug 11 2009 Phillipe Makowski <makowski@mandriva.org> 2.1.3.18185.0-4mdv2010.0
++ Revision: 414734
+- added correct Requires(pre)
+
+* Sun Aug 09 2009 Phillipe Makowski <makowski@mandriva.org> 2.1.3.18185.0-3mdv2010.0
++ Revision: 412354
+- remove incorrect groupadd
+
+* Sat Aug 08 2009 Phillipe Makowski <makowski@mandriva.org> 2.1.3.18185.0-2mdv2010.0
++ Revision: 411790
+- correct setuid for Classic lock manager
+
+* Wed Aug 05 2009 Phillipe Makowski <makowski@mandriva.org> 2.1.3.18185.0-1mdv2010.0
++ Revision: 410289
+- fix superserver init script
+- avoid conflict with gstat from ganglia
+- remove stupid rm -Rf in postun
+- using good macros
+
+* Wed Jul 29 2009 Phillipe Makowski <makowski@mandriva.org> 2.1.3.18185.0-0mdv2010.0
++ Revision: 403725
+- major cleaning install process to take care of the two architectures (Classic and Superserver) the right way
+- fix #36038
+- update to new upstream fix #52505
+- better fix #50101 and #45263 (user firebird created with nologin)
+- fix #28542
+- fix #34265 (change chkconfig: 345 20 80 to chkconfig: 345 80 20)
+
+* Mon Apr 20 2009 Oden Eriksson <oeriksson@mandriva.com> 2.1.2.18118.0-2mdv2009.1
++ Revision: 368462
+- fix #50101 (user firebird created with nologin)
+
+* Fri Apr 10 2009 Oden Eriksson <oeriksson@mandriva.com> 2.1.2.18118.0-1mdv2009.1
++ Revision: 365909
+- 2.1.2.18118-0
+- disable the -Werror=format-security flags
+
+* Fri Jul 18 2008 Oden Eriksson <oeriksson@mandriva.com> 2.1.1.17910.0-1mdv2009.0
++ Revision: 238144
+- 2.1.1.17910-0
+- rediff the patches
+- build it against system icu and edit libs
+
+  + Pixel <pixel@mandriva.com>
+    - do not call ldconfig in %%post/%%postun, it is now handled by filetriggers
+
+* Wed May 14 2008 Rafael da Veiga Cabral <cabral@mandriva.com> 2.0.4.13130.1-1mdv2009.0
++ Revision: 207344
+- Update to version 2.0.4.13130.
+- Changes on summary of the package.
+
+* Tue Mar 11 2008 Tiago Salem <salem@mandriva.com.br> 2.0.3.12981.0-2mdv2008.1
++ Revision: 186539
+- Fix initscript and create /etc/gds_hosts.equiv on %%post to fix bug #34267
+- bump release
+
+  + Olivier Blin <blino@mandriva.org>
+    - restore BuildRoot
+
+  + Thierry Vignaud <tv@mandriva.org>
+    - kill re-definition of %%buildroot on Pixel's request
+
+* Thu Sep 13 2007 Marcelo Ricardo Leitner <mrl@mandriva.com> 2.0.3.12981.0-1mdv2008.0
++ Revision: 84989
+- New upstream: 2.0.3.12981, fixing an annoying bug.
+
+* Fri Aug 24 2007 Marcelo Ricardo Leitner <mrl@mandriva.com> 2.0.2.12964.0-3mdv2008.0
++ Revision: 71056
+- New upstream: 2.0.2
+
+* Fri Aug 17 2007 Funda Wang <fwang@mandriva.org> 2.0.1.12855.0-3mdv2008.0
++ Revision: 64705
+- fix obsoletes old package
+
+* Wed Aug 15 2007 Funda Wang <fwang@mandriva.org> 2.0.1.12855.0-2mdv2008.0
++ Revision: 63722
+- Fix file conflict
+
+* Wed May 09 2007 Marcelo Ricardo Leitner <mrl@mandriva.com> 2.0.1.12855.0-1mdv2008.0
++ Revision: 25665
+- New upstream: 2.0.1
+- Removed patch amd64: applied upstream.
+
+
+* Fri Jan 19 2007 Marcelo Ricardo Leitner <mrl@mandriva.com> 2.0.0.12748-8mdv2007.0
++ Revision: 110615
+- Improve firebird-classic and firebird-superserver summaries in order
+  to explicit their difference: xinetd and standalone.
+
+* Fri Nov 24 2006 Marcelo Ricardo Leitner <mrl@mandriva.com> 2.0.0.12748-7mdv2007.1
++ Revision: 86946
+- Added /var/lib/firebird and /var/lib/firebird/backup to server-common
+  package.
+
+* Thu Nov 16 2006 Marcelo Ricardo Leitner <mrl@mandriva.com> 2.0.0.12748-6mdv2007.1
++ Revision: 84834
+- Try libncurses-devel instead
+- Added buildrequires to libncurses5-devel
+- New upstream: 2.0.0.12748 (2.0.0 final)
+- Fully disabled parallel build, as it is broken for now.
+- Bumped release, in order to be able to rebuild for x86_64.
+- Added missing BuildRequires to libtermcap-devel, as required by included
+  readline.
+
+* Wed Sep 13 2006 Marcelo Ricardo Leitner <mrl@mandriva.com> 2.0.0.12724-4mdv2007.0
++ Revision: 61079
+- Added Conflicts in firebird-server-common to firebird-firebird-server-classic
+  < 2.0 due to moved files.
+- Fix binaries ownership in firebird-server-classic. They should be owned by
+  root:root and not firebird:firebird.
+
+* Wed Sep 06 2006 Marcelo Ricardo Leitner <mrl@mandriva.com> 2.0.0.12724-3mdv2007.0
++ Revision: 59998
+- Applied Philippe Makowski suggestions:
+  * Include example employee.fdb
+  * -devel should requires libfbclient
+  * Tagged security2.fdb as config.
+
+* Tue Sep 05 2006 Marcelo Ricardo Leitner <mrl@mandriva.com> 2.0.0.12724-2mdv2007.0
++ Revision: 59875
+- Disabled parallel build: it's broken.
+- Import firebird
+
+* Sat Sep 02 2006 Marcelo Ricardo Leitner <mrl@mandriva.com> 2.0.0.12724-1mdv2007.0
+- Major packaging restructuring, following debian style.
+- Enabled superserver flavor.
+- Enhanced pre/post sections.
+- Do not remove firebird user on package removal: we may leave some files on
+  the filesystem.
+
+* Thu Aug 24 2006 Philippe Makowski <makowski@firebird-fr.eu.org> 2.0.0.12724-0.1mdk
+- Update to Firebird2
+
+* Tue Jul 26 2005 Stew Benedict <sbenedict@mandriva.com> 1.5.2.4731-0.3mdk
+- fix provides in lib package
+
+* Fri Jan 28 2005 Lenny Cartier <lenny@mandrakesoft.com> 1.5.2.4731-0.2mdk
+- add deps
+- little spec cleaning
+
+* Wed Jan 12 2005 Lenny Cartier <lenny@mandrakesoft.com> 1.5.2.4731-0.1mdk
+- from Philippe Makowski <makowski@firebird-fr.eu.org> :
+	- adapted to Mandrake
+	- updated from the CVS tree
+- libification
+- bzip2 patches
+- use configure macros
+- requires on versions not on releases
+
+* Wed Aug 18 2004 Erik S. LaBianca <erik@ilsw.com> - 1.5.1.4481-0.fdr.1
+- updated to 1.5.1 official source release
+- minimized install patch intrusiveness, move files in .spec file instead
+- don't try to remove the user/group on install, just leave the mess
+
+* Wed Feb 04 2004 Erik S. LaBianca <erik@ilsw.com> - 1.5.0.4280-postRC8.1
+- updated to CVS code
+- remove lock files from post/postun
+- set target arch to match prefix.linux settings
+- add dependencies to firebird RPM
+
+* Tue Feb 03 2004 Erik S. LaBianca <erik@ilsw.com> - 1.5.0.4201-1
+- updated to RC8 code
+- added gds_db service entry to /etc/services if necessary in post
+- fix isql link
 
