@@ -1,1 +1,4 @@
 addFilter("E: binary-or-shlib-defines-rpath.*")
+#false positive
+addFilter('E: incoherent-version-in-name')
+
