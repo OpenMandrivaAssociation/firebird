@@ -1,8 +1,8 @@
 %define Werror_cflags %{nil}
 
-%define	major 2.5.1
-%define pkgname Firebird-2.5.1.26351-0
-%define version 2.5.1.26351.0
+%define	major 2.5.2
+%define pkgname Firebird-2.5.2.26540-0
+%define version 2.5.2.26540.0
 %define somajor 2
 %define libfbclient %mklibname fbclient %somajor
 %define libfbembed %mklibname fbembed %somajor
@@ -12,15 +12,13 @@
 Summary:	Firebird SQL database management system
 Name:		firebird
 Version:	%{version}
-Release:	4
+Release:	1
 Group:		Databases
 License:	IPL
 URL:		http://www.firebirdsql.org/
 Source0:	http://downloads.sourceforge.net/firebird/%{pkgname}.tar.bz2
 Source1:	firebird-logrotate
 Source2:	firebird.mdv.releasenote
-# from upstream
-Patch0:         firebird-2.5.1-svn-CORE-3610.patch
 
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -358,7 +356,6 @@ firebird-server-superserver. You will need this if you want to use either one.
 
 %prep
 %setup -q -n %{pkgname}
-%patch0
 # convert intl character to UTF-8
 iconv -f ISO-8859-1 -t utf-8 -c ./doc/README.intl -o ./doc/README.intl
 
