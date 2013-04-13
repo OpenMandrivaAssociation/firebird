@@ -469,6 +469,8 @@ cp -d %{_builddir}/%{pkgname}/gen/buildroot%{_includedir}/%{name}/* %{buildroot}
 cp -d %{_builddir}/%{pkgname}/gen/buildroot%{_sysconfdir}/%{name}/* %{buildroot}%{_sysconfdir}/%{name}
 rm -f %{buildroot}%{_sysconfdir}/%{name}/README
 rm -f %{buildroot}%{_sysconfdir}/%{name}/WhatsNew
+rm -f %{buildroot}%{_sysconfdir}/%{name}/IDPLicense.txt
+rm -f %{buildroot}%{_sysconfdir}/%{name}/IPLicense.txt
 
 cp -d %{_builddir}/%{pkgname}/gen/buildroot-classic%{_libdir}/lib* %{buildroot}%{_libdir}
 cp -d %{_builddir}/%{pkgname}/gen/buildroot%{fbroot}/UDF/* %{buildroot}%{fbroot}/UDF
