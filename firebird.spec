@@ -19,6 +19,7 @@ URL:		http://www.firebirdsql.org/
 Source0:	http://downloads.sourceforge.net/firebird/%{pkgname}.tar.bz2
 Source1:	firebird-logrotate
 Source2:	firebird.mdv.releasenote
+Source100:	firebird.rpmlintrc
 
 BuildRequires:	autoconf
 BuildRequires:	automake
