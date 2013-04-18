@@ -1,28 +1,25 @@
 %define Werror_cflags %{nil}
 
-%define	major 2.5.2
+%define	major	2.5.2
 %define pkgname Firebird-2.5.2.26540-0
-%define version 2.5.2.26540.0
-%define somajor 2
-%define libfbclient %mklibname fbclient %somajor
-%define libfbembed %mklibname fbembed %somajor
+%define somajor	2
+%define libfbclient %mklibname fbclient %{somajor}
+%define libfbembed %mklibname fbembed %{somajor}
 
 %define fbroot %{_libdir}/%{name}
 
 Summary:	Firebird SQL database management system
 Name:		firebird
-Version:	%{version}
+Version:	2.5.2.26540.0
 Release:	1
 Group:		Databases
 License:	IPL
-URL:		http://www.firebirdsql.org/
+Url:		http://www.firebirdsql.org/
 Source0:	http://downloads.sourceforge.net/firebird/%{pkgname}.tar.bz2
 Source1:	firebird-logrotate
 Source2:	firebird.mdv.releasenote
 Source100:	firebird.rpmlintrc
 
-BuildRequires:	autoconf
-BuildRequires:	automake
 BuildRequires:	bison
 BuildRequires:	libtool
 BuildRequires:  pkgconfig(ncurses)
@@ -38,7 +35,6 @@ Requires:	sed
 This is the Firebird SQL Database shared files.
 
 %files
-%defattr(0644,root,root,0755)
 %doc doc/license/IDPL.txt
 %doc doc/license/README.license.usage.txt
 %doc gen/buildroot-classic%{_defaultdocdir}/%{name}
@@ -47,9 +43,6 @@ This is the Firebird SQL Database shared files.
 %doc gen/buildroot-classic%{_sysconfdir}/%{name}/README
 %doc gen/buildroot-classic%{_sysconfdir}/%{name}/WhatsNew
 
-#
-# Meta packages for allowing urpmi asking only once
-#
 %package	classic
 Summary:	Meta-package for Firebird SQL Classic Database (xinetd based)
 Group:		Databases
@@ -58,7 +51,7 @@ Requires:	%{name}-server-classic = %{version}
 Requires:	%{name}-utils-classic = %{version}
 Requires:	xinetd
 # Yes, we need force this. Otherwise, only direct local access wil be available.
-Requires:	%libfbclient
+Requires:	%{libfbclient}
 Conflicts:	%{name}-superserver
 Conflicts:	%{name}-superclassic
 
@@ -75,8 +68,8 @@ Provides:	%{name}-arch = %{version}-%{release}
 Requires:	%{name}-server-classic = %{version}
 Requires:	%{name}-utils-classic = %{version}
 # Yes, we need force this. Otherwise, only direct local access wil be available.
-Requires:	%libfbclient
-Requires:	%libfbembed
+Requires:	%{libfbclient}
+Requires:	%{libfbembed}
 Requires(pre):  rpm-helper
 Conflicts:	%{name}-superserver
 Conflicts:	%{name}-classic
@@ -85,7 +78,6 @@ Conflicts:	%{name}-classic
 This is a meta-package for easy selecting the SuperClassic arch for Firebird 2
 
 %files		superclassic
-%defattr(0755,root,root,0755)
 %{_initrddir}/%{name}-superclassic
 
 %package	superserver
@@ -102,33 +94,22 @@ This is a meta-package for easy selecting the SuperServer arch for Firebird 2
 
 %files		superserver
 
-#
-# Development headers and static libraries
-#
 %package	devel
 Summary:	Development Libraries for Firebird SQL Database
 Group:		Development/Databases
-Requires:	%libfbclient
-Requires:	%libfbembed
+Requires:	%{libfbclient}
+Requires:	%{libfbembed}
 
 %description	devel
 Development libraries for firebird.
 
 %files devel
-%defattr(0644,root,root,0755)
 %dir %{_includedir}/%{name}
 %{_includedir}/*.h
 %{_includedir}/%{name}/*.h
 %{_libdir}/libfb*.so
 %{_libdir}/libgds.so
 
-#
-# Standard client programs
-#
-
-#
-# Utils programs (classic)
-#
 %package	utils-classic
 Summary:	Client programs for Firebird SQL Database
 Group:		Databases
@@ -141,7 +122,6 @@ Obsoletes:	%{name}-client-embedded <= 2.0
 Client access tools for firebird embeded only.
 
 %files		utils-classic
-%defattr(0755,root,root,0755)
 %dir %{fbroot}/bin-classic
 %{fbroot}/bin-classic/gbak
 %{fbroot}/bin-classic/fbsvcmgr
@@ -149,9 +129,6 @@ Client access tools for firebird embeded only.
 %{fbroot}/bin-classic/qli
 %{fbroot}/bin-classic/fbtracemgr
 
-#
-# Utils programs (superserver)
-#
 %package	utils-superserver
 Summary:	Client programs for Firebird SQL Database
 Group:		Databases
@@ -163,7 +140,6 @@ Conflicts:	%{name}-utils-classic
 Client access tools for firebird.
 
 %files		utils-superserver
-%defattr(0755,root,root,0755)
 %dir %{fbroot}/bin-superserver
 %{fbroot}/bin-superserver/gbak
 %{fbroot}/bin-superserver/fbsvcmgr
@@ -179,11 +155,9 @@ Requires:	%{name}-utils-arch = %{version}-%{release}
 %description	utils-common
 Common client access tools for firebird.
 
-%files			utils-common
-%defattr(0644,root,root,0755)
+%files		utils-common
 %doc doc/license/IDPL.txt
 %doc doc/license/README.license.usage.txt
-%defattr(0755,root,root,0755)
 %dir %{fbroot}
 %ghost %{fbroot}/bin
 %{_bindir}/isql-fb
@@ -191,40 +165,30 @@ Common client access tools for firebird.
 %{_bindir}/fbsvcmgr
 %{_bindir}/qli
 %{_bindir}/fbtracemgr
-%defattr(0644,root,root,0755)
 %{_localstatedir}/lib/%{name}/system/*.msg
 %{_localstatedir}/lib/%{name}/system/help.fdb
 
-#
-# Multi-threaded, independant client libraries
-#
-%package -n %libfbclient
-Summary: Multi-threaded, non-local client libraries for Firebird SQL Database
-Group: System/Libraries
+%package -n %{libfbclient}
+Summary:	Multi-threaded, non-local client libraries for Firebird SQL Database
+Group:		System/Libraries
 
-%description -n %libfbclient
+%description -n %{libfbclient}
 Multi-threaded, non-local client libraries for Firebird SQL Database
 
-%files -n %libfbclient
+%files -n %{libfbclient}
 %{_libdir}/libfbclient.so.*
 %{_libdir}/libgds.so.0
 
-#
-# Multi-process, independant client libraries
-#
-%package -n %libfbembed
-Summary: Multi-process, local client libraries for Firebird SQL Database
-Group: System/Libraries
+%package -n %{libfbembed}
+Summary:	Multi-process, local client libraries for Firebird SQL Database
+Group:		System/Libraries
 
-%description -n %libfbembed
+%description -n %{libfbembed}
 Multi-process, local client libraries for Firebird SQL Database
 
-%files -n %libfbembed
+%files -n %{libfbembed}
 %{_libdir}/libfbembed.so.*
 
-#
-# Classic server programs
-#
 %package	server-classic
 Summary:	Classic (xinetd) server for Firebird SQL Database
 Group:		Databases
@@ -243,7 +207,6 @@ to classic and superclassic Firebird servers.
 %files		server-classic
 %dir %{fbroot}/bin-classic
 %dir %{fbroot}/plugins-classic
-%defattr(0755,root,root,0755)
 %{_sbindir}/fb_inet_server
 %{_sbindir}/fb_smp_server
 %{fbroot}/plugins-classic/*
@@ -256,9 +219,6 @@ to classic and superclassic Firebird servers.
 %{fbroot}/bin-classic/nbackup
 %{fbroot}/bin-classic/fb_config
 
-#
-# Super server programs
-#
 %package	server-superserver
 Summary:	Superserver (single process) server for Firebird SQL Database
 Group:		Databases
@@ -266,8 +226,8 @@ Provides:	firebird-server = %{version}-%{release}
 Requires:	%{name}-server-common = %{version}-%{release}
 Conflicts:	%{name}-server-classic
 Conflicts:	%{name}-server-superclassic
-Requires(pre):       %{name}-server-common = %{version}
-Requires(pre):  rpm-helper
+Requires(pre):	%{name}-server-common = %{version}
+Requires(pre):	rpm-helper
 
 %description	server-superserver
 This is the Superserver (single process) for the Firebird SQL Database.
@@ -276,10 +236,8 @@ It does not include any client access tools, nor does it include the
 multi-threaded client library.
 
 %files		server-superserver
-%defattr(0644,root,root,0755)
 %dir %{fbroot}/bin-superserver
 %dir %{fbroot}/plugins-superserver
-%defattr(0755,root,root,0755)
 %{_initrddir}/%{name}-superserver
 %{fbroot}/bin-superserver/gsec
 %{fbroot}/bin-superserver/gdef
@@ -292,22 +250,18 @@ multi-threaded client library.
 %{fbroot}/plugins-superserver/*.so
 %{_sbindir}/fbserver
 
-#
-# Server's common files
-#
-%package		server-common
-Summary:		Common files for Firebird SQL Database servers
-Group:			Databases
+%package	server-common
+Summary:	Common files for Firebird SQL Database servers
+Group:		Databases
 # Due to moved files.
-Conflicts:		firebird-server-classic < 2.0
-Requires:		firebird-server = %{version}-%{release}
+Conflicts:	firebird-server-classic < 2.0
+Requires:	firebird-server = %{version}-%{release}
 Requires(postun):	/usr/sbin/userdel
 Requires(postun):	/usr/sbin/groupdel
-Requires(pre):		/usr/sbin/groupadd
-Requires(pre):		/usr/sbin/useradd
-Requires:		logrotate
-Requires(pre):  	rpm-helper
-Obsoletes:		%{name}-server-superserver < 2.0.1.12855.0-3mdk
+Requires(pre):	/usr/sbin/groupadd
+Requires(pre):	/usr/sbin/useradd
+Requires:	logrotate
+Requires(pre): 	rpm-helper
 
 %description		server-common
 This package contains common files between firebird-server-classic and
@@ -354,16 +308,12 @@ firebird-server-superserver. You will need this if you want to use either one.
 %{_sbindir}/fb_lock_print
 %dir %attr(0775,%{name},%{name}) %{_var}/run/%{name}
 
-
 %prep
-%setup -q -n %{pkgname}
+%setup -qn %{pkgname}
 # convert intl character to UTF-8
 iconv -f ISO-8859-1 -t utf-8 -c ./doc/README.intl -o ./doc/README.intl
 
-# -----------------------------------------------------------------------------
-
 %build
-
 # disable -Wl,--no-undefined to avoid fail build of fbintl
 # when fbintl is loaded, one of the modules (libfbembed or fbserver) for sure exports
 # gds__log()
@@ -371,15 +321,27 @@ iconv -f ISO-8859-1 -t utf-8 -c ./doc/README.intl -o ./doc/README.intl
 
 # classic
 NOCONFIGURE=1 ./autogen.sh
-%configure --prefix=%{fbroot} --with-system-icu --with-system-editline \
- --with-fbbin=%{fbroot}/bin-classic --with-fbinclude=%{_includedir}/%{name} \
- --with-fbsbin=%{_sbindir} --with-fbconf=%{_sysconfdir}/%{name} --with-fblib=%{_libdir} \
- --with-fbdoc=%{_defaultdocdir}/%{name} --with-fbudf=%{fbroot}/UDF --with-fbsample=%{_defaultdocdir}/%{name}/examples \
- --with-fbsample-db=%{_localstatedir}/lib/%{name}/data/ \
- --with-fbhelp=%{_localstatedir}/lib/%{name}/system/ --with-fbintl=%{fbroot}/intl \
- --with-fbmisc=%{fbroot}/misc --with-fbsecure-db=%{_localstatedir}/lib/%{name}/system \
- --with-fbmsg=%{_localstatedir}/lib/%{name}/system --with-fblog=%{_localstatedir}/log/%{name} \
- --with-fbglock=%{_var}/run/%{name} --with-fbplugins=%{fbroot}/plugins-classic
+%configure \
+	--prefix=%{fbroot} \
+	--with-system-icu \
+	--with-system-editline \
+	--with-fbbin=%{fbroot}/bin-classic \
+	--with-fbinclude=%{_includedir}/%{name} \
+	--with-fbsbin=%{_sbindir} \
+	--with-fbconf=%{_sysconfdir}/%{name} \
+	--with-fblib=%{_libdir} \
+	--with-fbdoc=%{_defaultdocdir}/%{name} \
+	--with-fbudf=%{fbroot}/UDF \
+	--with-fbsample=%{_defaultdocdir}/%{name}/examples \
+	--with-fbsample-db=%{_localstatedir}/lib/%{name}/data/ \
+	--with-fbhelp=%{_localstatedir}/lib/%{name}/system/ \
+	--with-fbintl=%{fbroot}/intl \
+	--with-fbmisc=%{fbroot}/misc \
+	--with-fbsecure-db=%{_localstatedir}/lib/%{name}/system \
+	--with-fbmsg=%{_localstatedir}/lib/%{name}/system \
+	--with-fblog=%{_localstatedir}/log/%{name} \
+	--with-fbglock=%{_var}/run/%{name} \
+	--with-fbplugins=%{fbroot}/plugins-classic
 # Can't use %%make as itsparallel build is broken
 make
 cd gen
@@ -393,15 +355,28 @@ cd ..
 # superserver
 make clean
 NOCONFIGURE=1 ./autogen.sh
-%configure --prefix=%{fbroot} --with-system-icu --with-system-editline --enable-superserver \
- --with-fbbin=%{fbroot}/bin-superserver --with-fbinclude=%{_includedir}/%{name} \
- --with-fbsbin=%{_sbindir} --with-fbconf=%{_sysconfdir}/%{name} --with-fblib=%{_libdir} \
- --with-fbdoc=%{_defaultdocdir}/%{name} --with-fbudf=%{fbroot}/UDF --with-fbsample=%{_defaultdocdir}/%{name}/examples \
- --with-fbsample-db=%{_localstatedir}/lib/%{name}/data/ \
- --with-fbhelp=%{_localstatedir}/lib/%{name}/system/ --with-fbintl=%{fbroot}/intl \
- --with-fbmisc=%{fbroot}/misc --with-fbsecure-db=%{_localstatedir}/lib/%{name}/system \
- --with-fbmsg=%{_localstatedir}/lib/%{name}/system --with-fblog=%{_localstatedir}/log/%{name} \
- --with-fbglock=%{_var}/run/%{name} --with-fbplugins=%{fbroot}/plugins-superserver
+%configure \
+	--prefix=%{fbroot} \
+	--with-system-icu \
+	--with-system-editline \
+	--enable-superserver \
+	--with-fbbin=%{fbroot}/bin-superserver \
+	--with-fbinclude=%{_includedir}/%{name} \
+	--with-fbsbin=%{_sbindir} \
+	--with-fbconf=%{_sysconfdir}/%{name} \
+	--with-fblib=%{_libdir} \
+	--with-fbdoc=%{_defaultdocdir}/%{name} \
+	--with-fbudf=%{fbroot}/UDF \
+	--with-fbsample=%{_defaultdocdir}/%{name}/examples \
+	--with-fbsample-db=%{_localstatedir}/lib/%{name}/data/ \
+	--with-fbhelp=%{_localstatedir}/lib/%{name}/system/ \
+	--with-fbintl=%{fbroot}/intl \
+	--with-fbmisc=%{fbroot}/misc \
+	--with-fbsecure-db=%{_localstatedir}/lib/%{name}/system \
+	--with-fbmsg=%{_localstatedir}/lib/%{name}/system \
+	--with-fblog=%{_localstatedir}/log/%{name} \
+	--with-fbglock=%{_var}/run/%{name} \
+	--with-fbplugins=%{fbroot}/plugins-superserver
 # Can't use %%make as itsparallel build is broken
 make
 cd gen
@@ -423,11 +398,8 @@ management in:
 Please, read it.
 EOF
 
-# -----------------------------------------------------------------------------
-
 %install
 # we wanted to setup both Classic and Superserver, we need to do all here
-rm -Rf %{buildroot}
 install -d %{buildroot}
 
 mkdir -p %{buildroot}%{_sysconfdir}/%{name}
@@ -484,10 +456,10 @@ cp -d %{_builddir}/%{pkgname}/gen/buildroot-classic%{fbroot}/intl/fbintl.conf %{
 ln -s %{_sysconfdir}/%{name}/fbintl.conf .%{fbroot}/intl/fbintl.conf
 
 
-cd	%{buildroot}%{_libdir}
-ln	-s	libfbclient.so	libgds.so
-ln	-s	libfbclient.so.%{major}	libgds.so.0
-cd	%{buildroot}
+cd %{buildroot}%{_libdir}
+ln -s libfbclient.so	libgds.so
+ln -s libfbclient.so.%{major}	libgds.so.0
+cd %{buildroot}
 
 echo 1 > %{buildroot}%{_localstatedir}/log/%{name}/%{name}.log
 sed	"s@%{name}.log@%{_localstatedir}/log/%{name}/%{name}.log@g"	%{SOURCE1}	>	%{buildroot}%{_sysconfdir}/logrotate.d/%{name}
@@ -511,11 +483,7 @@ ln -s %{fbroot}/bin/nbackup .%{_bindir}/nbackup
 ln -s %{fbroot}/bin/qli .%{_bindir}/qli
 ln -s %{fbroot}/bin/fb_config .%{_bindir}/fb_config
 
-
 # -----------------------------------------------------------------------------
-
-%clean
-rm -rf %{buildroot}
 
 #-----------------------------------------------------------------------------
 # to bypass the rpm possible bug that don't do pre server-common
@@ -523,9 +491,6 @@ rm -rf %{buildroot}
 %pre	server-classic
 %_pre_useradd %{name} %{_localstatedir}/lib/%{name}/data /sbin/nologin
 
-# -----------------------------------------------------------------------------
-# classic server scripts
-# -----------------------------------------------------------------------------
 %post	server-classic
 if [ "$(readlink %{fbroot}/bin 2> /dev/null)" \!= "%{fbroot}/bin-classic" ]; then 
  [ -e %{fbroot}/bin ] && rm -f %{fbroot}/bin
@@ -579,10 +544,6 @@ if [ $1 -eq 0 ]; then
 fi
 %_preun_service %{name}-superclassic 
 
-
-# -----------------------------------------------------------------------------
-# superserver scripts
-# -----------------------------------------------------------------------------
 %post	server-superserver
 if [ "$(readlink %{fbroot}/bin 2> /dev/null)" \!= "%{fbroot}/bin-superserver" ]; then 
  [ -e %{fbroot}/bin ] && rm -f %{fbroot}/bin
@@ -612,9 +573,6 @@ if [ $1 -eq 0 ]; then
 fi
 %_preun_service %{name}-superserver 
 
-# -----------------------------------------------------------------------------
-# server-common scripts
-# -----------------------------------------------------------------------------
 %pre server-common
 # Create the firebird user and group if it doesn't exist
 %_pre_useradd %{name} %{_localstatedir}/lib/%{name}/data /sbin/nologin
