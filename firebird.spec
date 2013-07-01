@@ -8,7 +8,7 @@
 
 %define fbroot %{_libdir}/%{name}
 
-Summary:	Firebird SQL database management system
+Summary:	SQL database management system
 Name:		firebird
 Version:	2.5.2.26540.0
 Release:	1
