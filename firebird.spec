@@ -11,7 +11,7 @@
 Summary:	SQL database management system
 Name:		firebird
 Version:	2.5.2.26540.0
-Release:	1
+Release:	2
 Group:		Databases
 License:	IPL
 Url:		http://www.firebirdsql.org/
