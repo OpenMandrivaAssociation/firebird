@@ -1,0 +1,133 @@
+diff --git a/builds/posix/prefix.linux_aarch64 b/builds/posix/prefix.linux_aarch64
+new file mode 100644
+index 0000000..5c9aac7
+--- /dev/null
++++ b/builds/posix/prefix.linux_aarch64
+@@ -0,0 +1,31 @@
++# The contents of this file are subject to the Interbase Public
++# License Version 1.0 (the "License"); you may not use this file
++# except in compliance with the License. You may obtain a copy
++# of the License at http://www.Inprise.com/IPL.html
++#
++# Software distributed under the License is distributed on an
++# "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express
++# or implied. See the License for the specific language governing
++# rights and limitations under the License.
++#
++# The Original Code was created by Inprise Corporation
++# and its predecessors. Portions created by Inprise Corporation are
++# Copyright (C) Inprise Corporation.
++#
++# All Rights Reserved.
++# Contributor(s): ______________________________________.
++# Start of file prefix.linux:	$(VERSION)	$(PLATFORM)
++#
++# 2 Oct 2002, Nickolay Samofatov - Major cleanup
++
++COMMON_FLAGS=-DLINUX -DAARCH64 -pipe -MMD -fPIC -DFB_SEND_FLAGS=MSG_NOSIGNAL -fsigned-char -fmessage-length=0
++
++PROD_FLAGS=-O3 -DNDEBUG  $(COMMON_FLAGS)
++DEV_FLAGS=-ggdb -p -Wall $(COMMON_FLAGS)
++
++OS_ServerFiles=inet_server.cpp
++
++EMBED_UTIL_TARGETS=gstat gsec nbackup fb_lock_print fbguard fbsvcmgr fbtracemgr
++CLIENT_UTIL_TARGETS=gstat gsec nbackup fb_lock_print fbguard fbmgr_bin fbsvcmgr fbtracemgr
++
++Physical_IO_Module=os/posix/unix.cpp
+diff --git a/configure.in b/configure.in
+index afa27f5..67a6f25 100644
+--- a/configure.in
++++ b/configure.in
+@@ -213,6 +213,17 @@ dnl CPU_TYPE=ppc64
+     STD_ICU=true
+     ;;
+ 
++  aarch64*-*-linux*)
++    MAKEFILE_PREFIX=linux_aarch64
++    INSTALL_PREFIX=linux
++    PLATFORM=LINUX
++    AC_DEFINE(LINUX, 1, [Define this if OS is Linux])
++    EDITLINE_FLG=Y
++    SHRLIB_EXT=so
++    STD_EDITLINE=true
++    STD_ICU=true
++    ;;
++
+   sparc*-*-linux* | sparc*-*-gnu* | sparc*-*-k*bsd*-gnu)
+     MAKEFILE_PREFIX=linux_sparc32
+     INSTALL_PREFIX=linux
+diff --git a/src/jrd/common.h b/src/jrd/common.h
+index fb2c57f..69e9090 100644
+--- a/src/jrd/common.h
++++ b/src/jrd/common.h
+@@ -192,6 +192,10 @@
+ #define RISC_ALIGNMENT
+ #endif /* alpha */
+ 
++#ifdef __aarch64__
++#define IMPLEMENTATION  isc_info_db_impl_linux_aarch64 /* 84  */
++#endif /* alpha */
++
+ #endif /* LINUX */
+ 
+ 
+diff --git a/src/jrd/inf_pub.h b/src/jrd/inf_pub.h
+index 32ba5b3..4cab797 100644
+--- a/src/jrd/inf_pub.h
++++ b/src/jrd/inf_pub.h
+@@ -215,6 +215,7 @@ enum  info_db_implementations
+ 	isc_info_db_impl_linux_sheb = 81,
+ 	isc_info_db_impl_linux_hppa = 82,
+ 	isc_info_db_impl_linux_alpha = 83,
++	isc_info_db_impl_linux_aarch64 = 84,
+ 
+ 	isc_info_db_impl_last_value   // Leave this LAST!
+ };
+diff --git a/src/jrd/pag.cpp b/src/jrd/pag.cpp
+index e3a75f7..5d9ba36 100644
+--- a/src/jrd/pag.cpp
++++ b/src/jrd/pag.cpp
+@@ -162,9 +162,10 @@ static const int CLASS_LINUX_SH = 38;		// LINUX/SH (little-endian)
+ static const int CLASS_LINUX_SHEB = 39;		// LINUX/SH (big-endian)
+ static const int CLASS_LINUX_HPPA = 40;		// LINUX/HPPA
+ static const int CLASS_LINUX_ALPHA = 41;	// LINUX/ALPHA
++static const int CLASS_LINUX_AARCH64 = 42;	// LINUX/AARCH64
+ 
+ static const int CLASS_MAX10 = CLASS_LINUX_AMD64;	// This should not be changed, no new ports with ODS10
+-static const int CLASS_MAX = CLASS_LINUX_ALPHA;
++static const int CLASS_MAX = CLASS_LINUX_AARCH64;
+ 
+ // ARCHITECTURE COMPATIBILITY CLASSES
+ 
+@@ -263,7 +264,8 @@ static const ArchitectureType archMatrix[CLASS_MAX + 1] =
+ 	archLittleEndian, // CLASS_LINUX_SH
+ 	archBigEndian,    // CLASS_LINUX_SHEB
+ 	archBigEndian,    // CLASS_LINUX_HPPA
+-	archLittleEndian  // CLASS_LINUX_ALPHA
++	archLittleEndian, // CLASS_LINUX_ALPHA
++	archLittleEndian  // CLASS_LINUX_AARCH64
+ };
+ 
+ #ifdef __sun
+@@ -327,6 +329,8 @@ const SSHORT CLASS		= CLASS_LINUX_SHEB;
+ const SSHORT CLASS		= CLASS_LINUX_HPPA;
+ #elif defined(ALPHA)
+ const SSHORT CLASS		= CLASS_LINUX_ALPHA;
++#elif defined(__aarch64__)
++const SSHORT CLASS		= CLASS_LINUX_AARCH64;
+ #else
+ #error no support on other hardware for Linux
+ #endif
+diff --git a/src/jrd/utl.cpp b/src/jrd/utl.cpp
+index fabc027..d8b7ae8 100644
+--- a/src/jrd/utl.cpp
++++ b/src/jrd/utl.cpp
+@@ -228,6 +228,7 @@ static const TEXT* const impl_implementation[] =
+ 	"Firebird/linux SHEB",			// 81
+ 	"Firebird/linux HPPA",			// 82
+ 	"Firebird/linux ALPHA"			// 83
++	"Firebird/linux AArch64"		// 84
+ };
+ 
+ 
