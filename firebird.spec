@@ -31,7 +31,7 @@ BuildRequires:	autoconf
 BuildRequires:	automake
 BuildRequires:	bison
 BuildRequires:	libtool
-Buildrequires:	pkgconfig(ncurses)
+BuildRequires:	pkgconfig(ncurses)
 BuildRequires:  icu-devel
 BuildRequires:  pkgconfig(libedit)
 BuildRequires:	libstdc++-static-devel
