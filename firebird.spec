@@ -24,7 +24,7 @@ BuildRequires:	bison
 BuildRequires:	libtool
 BuildRequires:  pkgconfig(ncurses)
 BuildRequires:  icu-devel
-BuildRequires:  edit-devel
+BuildRequires:  pkgconfig(libedit)
 BuildRequires:	gcc-c++
 BuildRequires:	libstdc++-static-devel
 Requires:	%{name}-arch = %{version}-%{release}
