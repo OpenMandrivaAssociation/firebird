@@ -68,7 +68,7 @@ Requires:	%{name}-server-classic = %{version}
 Requires:	%{name}-utils-classic = %{version}
 Requires:	xinetd
 # Yes, we need force this. Otherwise, only direct local access wil be available.
-Requires:	%libfbclient
+Requires:	%{libfbclient}
 Conflicts:	%{name}-superserver
 Conflicts:	%{name}-superclassic
 
@@ -86,8 +86,9 @@ Provides:	%{name}-arch = %{version}-%{release}
 Requires:	%{name}-server-classic = %{version}
 Requires:	%{name}-utils-classic = %{version}
 # Yes, we need force this. Otherwise, only direct local access wil be available.
-Requires:	%libfbclient
-Requires:	%libfbembed
+Requires:	%{libfbclient}
+Requires:	%{libfbembed}
+Requires(pre):  rpm-helper
 Conflicts:	%{name}-superserver
 Conflicts:	%{name}-classic
 
@@ -118,8 +119,8 @@ This is a meta-package for easy selecting the SuperServer arch for Firebird 2
 %package	devel
 Summary:	Development Libraries for Firebird SQL Database
 Group:		Development/Databases
-Requires:	%libfbclient
-Requires:	%libfbembed
+Requires:	%{libfbclient}
+Requires:	%{libfbembed}
 
 %description	devel
 Development libraries for firebird.
@@ -208,11 +209,11 @@ Common client access tools for firebird.
 #
 # Multi-threaded, independant client libraries
 #
-%package -n %libfbclient
+%package -n %{libfbclient}
 Summary: Multi-threaded, non-local client libraries for Firebird SQL Database
 Group: System/Libraries
 
-%description -n %libfbclient
+%description -n %{libfbclient}
 Multi-threaded, non-local client libraries for Firebird SQL Database
 
 %files -n %libfbclient
@@ -222,14 +223,14 @@ Multi-threaded, non-local client libraries for Firebird SQL Database
 #
 # Multi-process, independant client libraries
 #
-%package -n %libfbembed
+%package -n %{libfbembed}
 Summary: Multi-process, local client libraries for Firebird SQL Database
 Group: System/Libraries
 
-%description -n %libfbembed
+%description -n %{libfbembed}
 Multi-process, local client libraries for Firebird SQL Database
 
-%files -n %libfbembed
+%files -n %{libfbembed}
 %{_libdir}/libfbembed.so.*
 
 #
@@ -244,6 +245,7 @@ Conflicts:	%{name}-server-superserver
 Requires(pre):  %{name}-server-common = %{version}
 Requires(pre):  /usr/sbin/groupadd
 Requires(pre):  /usr/sbin/useradd
+Requires(pre):  rpm-helper
 
 %description	server-classic
 This package contains the command line utilities 
@@ -275,7 +277,8 @@ Provides:	firebird-server = %{version}-%{release}
 Requires:	%{name}-server-common = %{version}-%{release}
 Conflicts:	%{name}-server-classic
 Conflicts:	%{name}-server-superclassic
-Requires(pre):       %{name}-server-common = %{version}
+Requires(pre):	%{name}-server-common = %{version}
+Requires(pre):	rpm-helper
 
 %description	server-superserver
 This is the Superserver (single process) for the Firebird SQL Database.
@@ -314,6 +317,7 @@ Requires(postun):	/usr/sbin/groupdel
 Requires(pre):		/usr/sbin/groupadd
 Requires(pre):		/usr/sbin/useradd
 Requires:		logrotate
+Requires(pre):		rpm-helper
 Obsoletes:		%{name}-server-superserver < 2.0.1.12855.0-3mdk
 
 %description		server-common
@@ -363,7 +367,7 @@ firebird-server-superserver. You will need this if you want to use either one.
 
 
 %prep
-%setup -q -n %{pkgname}
+%setup -qn %{pkgname}
 %patch0
 %patch1
 # convert intl character to UTF-8
@@ -425,7 +429,7 @@ sed "s@%%{fbroot}@%{fbroot}@g" %{SOURCE2} > firebird.omv.releasenote
 
 cat > README.urpmi <<EOF
 You just installed or update %{name} server.
-You can found important informations about mageia %{name} rpms and database
+You can found important informations about OpenMandriva %{name} rpms and database
 management in:
 
 %{_defaultdocdir}/%{name}-server-common/firebird.omv.releasenote
@@ -526,23 +530,6 @@ d /run/firebird 0775 firebird firebird
 EOF
 
 
-# -----------------------------------------------------------------------------
-# lib scripts
-# -----------------------------------------------------------------------------
-# While using -p flag, you can't leave comments until the next tag.
-# The following section can be deleted before next build
-#%if %mdkversion < 200900
-#%post -n %libfbclient -p /sbin/ldconfig
-#%endif
-#%if %mdkversion < 200900
-#%postun -n %libfbclient -p /sbin/ldconfig
-#%endif
-#%if %mdkversion < 200900
-#%post -n %libfbembed -p /sbin/ldconfig
-#%endif
-#%if %mdkversion < 200900
-#%postun -n %libfbembed -p /sbin/ldconfig
-#%endif
 chmod 0777 %{buildroot}/%{_libdir}/libib_util.so
 
 #-----------------------------------------------------------------------------
