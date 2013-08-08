@@ -1,12 +1,11 @@
 %define	major 2.5.2
 %define pkgname Firebird-%{version}-0
 %define version %{major}.26540
-%define somajor 2
+%define somajor 2.5
 %define libfbclient %mklibname fbclient %somajor
 %define libfbembed %mklibname fbembed %somajor
 
 %define fbroot %{_libdir}/%{name}
-%define	_tmpfilesdir	%{_prefix}/lib/tmpfiles.d
 
 Summary:	Firebird SQL database management system
 Name:		firebird
@@ -349,7 +348,7 @@ firebird-server-superserver. You will need this if you want to use either one.
 %{fbroot}/intl/fbintl.conf
 %config(noreplace) %attr(0664,%{name},%{name})  %{_localstatedir}/log/%{name}/%{name}.log
 %config(noreplace) %attr(0644,root,root) %{_sysconfdir}/logrotate.d/%{name}
-%{_tmpfilesdir}/%{name}.conf
+%{_prefix}/lib/tmpfiles.d/%{name}.conf
 %{_libdir}/libib_util.so
 %defattr(0755,root,root,0750)
 %{fbroot}/intl/fbintl
@@ -524,13 +523,13 @@ ln -s %{fbroot}/bin/nbackup .%{_bindir}/nbackup
 ln -s %{fbroot}/bin/qli .%{_bindir}/qli
 ln -s %{fbroot}/bin/fb_config .%{_bindir}/fb_config
 
-mkdir -p %{buildroot}%{_tmpfilesdir}
-cat <<EOF > %{buildroot}%{_tmpfilesdir}/%{name}.conf
+mkdir -p %{buildroot}%{_prefix}/lib/tmpfiles.d
+cat <<EOF > %{buildroot}%{_prefix}/lib/tmpfiles.d/%{name}.conf
 d /run/firebird 0775 firebird firebird
 EOF
 
 
-chmod 0777 %{buildroot}/%{_libdir}/libib_util.so
+chmod 777 %{buildroot}/%{_libdir}/libib_util.so
 
 #-----------------------------------------------------------------------------
 # to bypass the rpm possible bug that don't do pre server-common
