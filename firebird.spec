@@ -21,6 +21,7 @@ Source4:	firebird-classic@.service
 Source5:	firebird-classic.socket
 Source6:	firebird-superclassic.service
 Source7:	firebird-superserver.service
+Source100:	%{name}.rpmlintrc
 
 # from upstream
 Patch0: firebird-2.5.2-svn-CORE-3946.patch
