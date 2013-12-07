@@ -10,7 +10,7 @@
 Summary:	Firebird SQL database management system
 Name:		firebird
 Version:	%{version}
-Release:	5
+Release:	6
 Group:		Databases
 License:	MPLv1.1-like
 URL:		http://www.firebirdsql.org/
