@@ -25,12 +25,9 @@ Source100:	%{name}.rpmlintrc
 
 # from upstream
 Patch0:		firebird-2.5.2-svn-CORE-3946.patch
-Patch1:		firebird-2.5.2-svn-CORE-4058.patch
-Patch4:		firebird-2.5.2-svn-58886.patch
-
 Patch2:		firebird-btyacc-fpie.patch
 Patch3:		firebird-aarch64.patch
-
+Patch4:		firebird-2.5.2-svn-58886.patch
 
 BuildRequires:	autoconf
 BuildRequires:	automake
