@@ -24,8 +24,13 @@ Source7:	firebird-superserver.service
 Source100:	%{name}.rpmlintrc
 
 # from upstream
-Patch0: firebird-2.5.2-svn-CORE-3946.patch
-Patch1: firebird-2.5.2-svn-CORE-4011.patch
+Patch0:		firebird-2.5.2-svn-CORE-3946.patch
+Patch1:		firebird-2.5.2-svn-CORE-4058.patch
+Patch4:		firebird-2.5.2-svn-58886.patch
+
+Patch2:		firebird-btyacc-fpie.patch
+Patch3:		firebird-aarch64.patch
+
 
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -369,7 +374,10 @@ firebird-server-superserver. You will need this if you want to use either one.
 %prep
 %setup -qn %{pkgname}
 %patch0
-%patch1
+%patch2
+%patch3 -p1
+%patch4 -p0
+
 # convert intl character to UTF-8
 iconv -f ISO-8859-1 -t utf-8 -c ./doc/README.intl -o ./doc/README.intl
 
