@@ -25,6 +25,8 @@ Source100:	%{name}.rpmlintrc
 
 # from upstream
 Patch0:		firebird-2.5.2-svn-CORE-3946.patch
+# from OpenSUSE, required by libreoffice 4.2
+Patch1:		firebird-2.5.2-pkgconfig.patch
 Patch2:		firebird-btyacc-fpie.patch
 Patch3:		firebird-aarch64.patch
 Patch4:		firebird-2.5.2-svn-58886.patch
@@ -134,6 +136,7 @@ Development libraries for firebird.
 %{_includedir}/%{name}/*.h
 %{_libdir}/libfb*.so
 %{_libdir}/libgds.so
+%{_libdir}/pkgconfig/*.pc
 
 #
 # Standard client programs
@@ -371,6 +374,7 @@ firebird-server-superserver. You will need this if you want to use either one.
 %prep
 %setup -qn %{pkgname}
 %patch0
+%patch1 -p0 -b .pkgconfig~
 %patch2
 %patch3 -p1
 %patch4 -p0
@@ -467,6 +471,9 @@ mkdir -p %{buildroot}%{_sysconfdir}/xinetd.d
 mkdir -p %{buildroot}%{_unitdir} 
 mkdir -p %{buildroot}%{_sbindir}
 mkdir -p %{buildroot}%{_bindir}
+
+mkdir -p %{buildroot}%{_libdir}/pkgconfig
+cp -v gen/install/misc/*.pc %{buildroot}%{_libdir}/pkgconfig/
 
 cd %{buildroot}
 cp -d %{_builddir}/%{pkgname}/gen/buildroot%{_sysconfdir}/%{name}/* %{buildroot}%{_sysconfdir}/%{name}
