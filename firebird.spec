@@ -1,6 +1,6 @@
-%define	major 2.5.2
+%define	major 2.5.3
 %define pkgname Firebird-%{version}-0
-%define version %{major}.26540
+%define version %{major}.26778
 %define somajor 2.5
 %define libfbclient %mklibname fbclient %somajor
 %define libfbembed %mklibname fbembed %somajor
@@ -10,7 +10,7 @@
 Summary:	Firebird SQL database management system
 Name:		firebird
 Version:	%{version}
-Release:	11
+Release:	1
 Group:		Databases
 License:	MPLv1.1-like
 URL:		http://www.firebirdsql.org/
@@ -23,13 +23,9 @@ Source6:	firebird-superclassic.service
 Source7:	firebird-superserver.service
 Source100:	%{name}.rpmlintrc
 
-# from upstream
-Patch0:		firebird-2.5.2-svn-CORE-3946.patch
 # from OpenSUSE, required by libreoffice 4.2
 Patch1:		firebird-2.5.2-pkgconfig.patch
 Patch2:		firebird-btyacc-fpie.patch
-Patch3:		firebird-aarch64.patch
-Patch4:		firebird-2.5.2-svn-58886.patch
 
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -373,11 +369,8 @@ firebird-server-superserver. You will need this if you want to use either one.
 
 %prep
 %setup -qn %{pkgname}
-%patch0
 %patch1 -p0 -b .pkgconfig~
 %patch2
-%patch3 -p1
-%patch4 -p0
 
 # convert intl character to UTF-8
 iconv -f ISO-8859-1 -t utf-8 -c ./doc/README.intl -o ./doc/README.intl
