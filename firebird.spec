@@ -244,8 +244,6 @@ Provides:	firebird-server = %{version}-%{release}
 Requires:	%{name}-server-common = %{version}
 Conflicts:	%{name}-server-superserver
 Requires(pre):  %{name}-server-common = %{version}
-Requires(pre):  /usr/sbin/groupadd
-Requires(pre):  /usr/sbin/useradd
 Requires(pre):  rpm-helper
 
 %description	server-classic
@@ -313,10 +311,7 @@ Group:			Databases
 # Due to moved files.
 Conflicts:		firebird-server-classic < 2.0
 Requires:		firebird-server = %{version}-%{release}
-Requires(postun):	/usr/sbin/userdel
-Requires(postun):	/usr/sbin/groupdel
-Requires(pre):		/usr/sbin/groupadd
-Requires(pre):		/usr/sbin/useradd
+Requires(postun):	rpm-helper
 Requires:		logrotate
 Requires(pre):		rpm-helper
 Obsoletes:		%{name}-server-superserver < 2.0.1.12855.0-3mdk
