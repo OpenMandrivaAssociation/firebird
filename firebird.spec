@@ -10,7 +10,7 @@
 Summary:	Firebird SQL database management system
 Name:		firebird
 Version:	%{version}
-Release:	1
+Release:	3
 Group:		Databases
 License:	MPLv1.1-like
 URL:		http://www.firebirdsql.org/
@@ -381,7 +381,7 @@ iconv -f ISO-8859-1 -t utf-8 -c ./doc/README.intl -o ./doc/README.intl
 
 # classic
 NOCONFIGURE=1 ./autogen.sh
-%configure2_5x --prefix=%{fbroot} --with-system-icu --with-system-editline \
+%configure --prefix=%{fbroot} --with-system-icu --with-system-editline \
  --with-fbbin=%{fbroot}/bin-classic --with-fbinclude=%{_includedir}/%{name} \
  --with-fbsbin=%{_sbindir} --with-fbconf=%{_sysconfdir}/%{name} --with-fblib=%{_libdir} \
  --with-fbdoc=%{_defaultdocdir}/%{name} --with-fbudf=%{fbroot}/UDF --with-fbsample=%{_defaultdocdir}/%{name}/examples \
@@ -403,7 +403,7 @@ cd ..
 # superserver
 make clean
 NOCONFIGURE=1 ./autogen.sh
-%configure2_5x --prefix=%{fbroot} --with-system-icu --with-system-editline --enable-superserver \
+%configure --prefix=%{fbroot} --with-system-icu --with-system-editline --enable-superserver \
  --with-fbbin=%{fbroot}/bin-superserver --with-fbinclude=%{_includedir}/%{name} \
  --with-fbsbin=%{_sbindir} --with-fbconf=%{_sysconfdir}/%{name} --with-fblib=%{_libdir} \
  --with-fbdoc=%{_defaultdocdir}/%{name} --with-fbudf=%{fbroot}/UDF --with-fbsample=%{_defaultdocdir}/%{name}/examples \
