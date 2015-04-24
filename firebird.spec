@@ -1,6 +1,6 @@
-%define	major 2.5.3
+%define	major 2.5.4
 %define pkgname Firebird-%{version}-0
-%define version %{major}.26778
+%define version %{major}.26856
 %define somajor 2.5
 %define libfbclient %mklibname fbclient %somajor
 %define libfbembed %mklibname fbembed %somajor
@@ -334,7 +334,6 @@ firebird-server-superserver. You will need this if you want to use either one.
 %dir %{fbroot}/intl
 %dir %{fbroot}/UDF
 %{fbroot}/UDF/*
-%ghost %{fbroot}/bin
 %dir %{_sysconfdir}/%{name}
 %dir %attr(0755,%{name},%{name}) %{_localstatedir}/lib/%{name}/system
 %config(noreplace) %attr (0600,%{name},%{name}) %{_localstatedir}/lib/%{name}/system/security2.fdb
