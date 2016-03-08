@@ -1,6 +1,6 @@
-%define	major 2.5.4
+%define	major 2.5.5
 %define pkgname Firebird-%{version}-0
-%define version %{major}.26856
+%define version %{major}.26952
 %define somajor 2.5
 %define libfbclient %mklibname fbclient %somajor
 %define libfbembed %mklibname fbembed %somajor
@@ -10,7 +10,7 @@
 Summary:	Firebird SQL database management system
 Name:		firebird
 Version:	%{version}
-Release:	5
+Release:	1
 Group:		Databases
 License:	MPLv1.1-like
 URL:		http://www.firebirdsql.org/
