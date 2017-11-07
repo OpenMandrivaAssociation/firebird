@@ -7,10 +7,13 @@
 
 %define fbroot %{_libdir}/%{name}
 
+# Sadly, the code is hopelessly broken...
+%global optflags %{optflags} -fpermissive -Wno-error -Wno-c++11-narrowing
+
 Summary:	Firebird SQL database management system
 Name:		firebird
 Version:	%{version}
-Release:	1
+Release:	2
 Group:		Databases
 License:	MPLv1.1-like
 URL:		http://www.firebirdsql.org/
@@ -26,6 +29,8 @@ Source100:	%{name}.rpmlintrc
 # from OpenSUSE, required by libreoffice 4.2
 Patch1:		firebird-2.5.2-pkgconfig.patch
 Patch2:		firebird-btyacc-fpie.patch
+
+Patch10:	firebird-2.5.6-compile.patch
 
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -363,8 +368,7 @@ firebird-server-superserver. You will need this if you want to use either one.
 
 %prep
 %setup -qn %{pkgname}
-%patch1 -p0 -b .pkgconfig~
-%patch2
+%apply_patches
 
 # convert intl character to UTF-8
 iconv -f ISO-8859-1 -t utf-8 -c ./doc/README.intl -o ./doc/README.intl
@@ -397,7 +401,7 @@ NOCONFIGURE=1 ./autogen.sh
  --with-fbmsg=%{_localstatedir}/lib/%{name}/system --with-fblog=%{_localstatedir}/log/%{name} \
  --with-fbglock=/run/%{name} --with-fbplugins=%{fbroot}/plugins-classic
 # Can't use %%make as itsparallel build is broken
-make
+make LDFLAGS="-flto -pthread"
 cd gen
 sed "s@exit 1@# exit 1@" -i ./install/makeInstallImage.sh
 sed "s@chown@echo ""# chown@g" -i ./install/makeInstallImage.sh

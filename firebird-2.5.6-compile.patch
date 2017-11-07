@@ -1,0 +1,44 @@
+--- Firebird-2.5.6.27020-0/src/jrd/idx.h.omv~	2017-11-07 16:40:43.931518793 +0100
++++ Firebird-2.5.6.27020-0/src/jrd/idx.h	2017-11-07 16:40:55.879539844 +0100
+@@ -53,7 +53,7 @@ using Jrd::idx_metadata;
+ using Jrd::idx_numeric;
+ using Jrd::idx_descending;
+ 
+-#define INDEX(id, flag, rel, unique, count) {(id), (flag), (UCHAR) (rel), (unique), (count), {
++#define INDEX(id, flag, rel, unique, count) {(id), static_cast<UCHAR>(flag), (UCHAR) (rel), (unique), (count), {
+ #define SEGMENT(fld, type) {(fld), (type)}
+ 
+ static const struct ini_idx_t indices[] =
+--- Firebird-2.5.6.27020-0/src/jrd/ods.h.omv~	2017-11-07 16:44:59.998129968 +0100
++++ Firebird-2.5.6.27020-0/src/jrd/ods.h	2017-11-07 16:45:36.376212063 +0100
+@@ -114,20 +114,20 @@ const USHORT ODS_CURRENT11		= 2;
+ // useful ODS macros. These are currently used to flag the version of the
+ // system triggers and system indices in ini.epp
+ 
+-inline USHORT ENCODE_ODS(USHORT major, USHORT minor)
++static inline UCHAR ENCODE_ODS(USHORT major, USHORT minor)
+ {
+ 	return ((major << 4) | minor);
+ }
+ 
+-const USHORT ODS_8_0		= ENCODE_ODS(ODS_VERSION8, 0);
+-const USHORT ODS_8_1		= ENCODE_ODS(ODS_VERSION8, 1);
+-const USHORT ODS_9_0		= ENCODE_ODS(ODS_VERSION9, 0);
+-const USHORT ODS_9_1		= ENCODE_ODS(ODS_VERSION9, 1);
+-const USHORT ODS_10_0		= ENCODE_ODS(ODS_VERSION10, 0);
+-const USHORT ODS_10_1		= ENCODE_ODS(ODS_VERSION10, 1);
+-const USHORT ODS_11_0		= ENCODE_ODS(ODS_VERSION11, 0);
+-const USHORT ODS_11_1		= ENCODE_ODS(ODS_VERSION11, 1);
+-const USHORT ODS_11_2		= ENCODE_ODS(ODS_VERSION11, 2);
++const UCHAR ODS_8_0		= ENCODE_ODS(ODS_VERSION8, 0);
++const UCHAR ODS_8_1		= ENCODE_ODS(ODS_VERSION8, 1);
++const UCHAR ODS_9_0		= ENCODE_ODS(ODS_VERSION9, 0);
++const UCHAR ODS_9_1		= ENCODE_ODS(ODS_VERSION9, 1);
++const UCHAR ODS_10_0		= ENCODE_ODS(ODS_VERSION10, 0);
++const UCHAR ODS_10_1		= ENCODE_ODS(ODS_VERSION10, 1);
++const UCHAR ODS_11_0		= ENCODE_ODS(ODS_VERSION11, 0);
++const UCHAR ODS_11_1		= ENCODE_ODS(ODS_VERSION11, 1);
++const UCHAR ODS_11_2		= ENCODE_ODS(ODS_VERSION11, 2);
+ 
+ const USHORT ODS_FIREBIRD_FLAG = 0x8000;
+ 

@@ -1,6 +1,6 @@
-diff -up builds/install/arch-specific/linux/classic/fbembed.pc.in.orig-pc builds/install/arch-specific/linux/classic/fbembed.pc.in
---- builds/install/arch-specific/linux/classic/fbembed.pc.in.orig-pc	2011-11-29 09:05:40.657958483 +0100
-+++ builds/install/arch-specific/linux/classic/fbembed.pc.in	2011-11-29 09:11:59.873852393 +0100
+diff -up fb/builds/install/arch-specific/linux/classic/fbembed.pc.in.orig-pc builds/install/arch-specific/linux/classic/fbembed.pc.in
+--- fb/builds/install/arch-specific/linux/classic/fbembed.pc.in.orig-pc	2011-11-29 09:05:40.657958483 +0100
++++ fb/builds/install/arch-specific/linux/classic/fbembed.pc.in	2011-11-29 09:11:59.873852393 +0100
 @@ -0,0 +1,10 @@
 +prefix=@prefix@
 +exec_prefix=@exec_prefix@
@@ -12,9 +12,9 @@ diff -up builds/install/arch-specific/linux/classic/fbembed.pc.in.orig-pc builds
 +Version: @FIREBIRD_VERSION@
 +Cflags: -I${includedir}
 +Libs: -L${libdir} -lfbclient
-diff -up builds/install/arch-specific/linux/super/fbclient.pc.in.orig-pc builds/install/arch-specific/linux/super/fbclient.pc.in
---- builds/install/arch-specific/linux/super/fbclient.pc.in.orig-pc	2011-11-29 09:05:40.657958483 +0100
-+++ builds/install/arch-specific/linux/super/fbclient.pc.in	2011-11-29 09:12:04.660753104 +0100
+diff -up fb/builds/install/arch-specific/linux/super/fbclient.pc.in.orig-pc builds/install/arch-specific/linux/super/fbclient.pc.in
+--- fb/builds/install/arch-specific/linux/super/fbclient.pc.in.orig-pc	2011-11-29 09:05:40.657958483 +0100
++++ fb/builds/install/arch-specific/linux/super/fbclient.pc.in	2011-11-29 09:12:04.660753104 +0100
 @@ -0,0 +1,10 @@
 +prefix=@prefix@
 +exec_prefix=@exec_prefix@
@@ -27,8 +27,8 @@ diff -up builds/install/arch-specific/linux/super/fbclient.pc.in.orig-pc builds/
 +Cflags: -I${includedir}
 +Libs: -L${libdir} -lfbclient
 diff -up configure.in.orig-pc configure.in
---- configure.in.orig-pc	2011-08-02 17:50:56.000000000 +0200
-+++ configure.in	2011-11-29 09:05:40.657958483 +0100
+--- fb/configure.in.orig-pc	2011-08-02 17:50:56.000000000 +0200
++++ fb/configure.in	2011-11-29 09:05:40.657958483 +0100
 @@ -1290,6 +1290,12 @@ case "$PLATFORM" in
                       gen/install/misc/rc.config.firebird:builds/install/arch-specific/linux/misc/rc.config.firebird.in
                       gen/firebird/bin/linuxLibrary.sh:builds/install/arch-specific/linux/misc/linuxLibrary.sh.in]
