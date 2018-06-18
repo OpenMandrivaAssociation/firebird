@@ -1,6 +1,6 @@
-%define	major 2.5.6
+%define	major 2.5.8
 %define pkgname Firebird-%{version}-0
-%define version %{major}.27020
+%define version %{major}.27089
 %define somajor 2.5
 %define libfbclient %mklibname fbclient %somajor
 %define libfbembed %mklibname fbembed %somajor
@@ -17,7 +17,7 @@ Release:	2
 Group:		Databases
 License:	MPLv1.1-like
 URL:		http://www.firebirdsql.org/
-Source0:	http://downloads.sourceforge.net/firebird/%{pkgname}.tar.bz2
+Source0:	https://github.com/FirebirdSQL/firebird/releases/download/R%(echo %{major} |sed -e 's,\.,_,g')/Firebird-%{version}-0.tar.bz2
 Source1:	firebird-logrotate
 Source2:	firebird.omv.releasenote
 Source4:	firebird-classic@.service
