@@ -41,6 +41,7 @@ BuildRequires:  icu-devel
 BuildRequires:  pkgconfig(libedit)
 BuildRequires:	libstdc++-static-devel
 BuildRequires:	libatomic_ops-devel
+BuildRequires:	systemd
 Requires:	%{name}-arch = %{version}-%{release}
 Requires:	grep
 Requires:	sed
