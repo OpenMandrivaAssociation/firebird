@@ -370,6 +370,8 @@ firebird-server-superserver. You will need this if you want to use either one.
 %prep
 %setup -qn %{pkgname}
 %apply_patches
+# libio.h is not installed by glibc >= 2.28
+sed -i '/libio\.h/d' src/jrd/perf.h
 
 # convert intl character to UTF-8
 iconv -f ISO-8859-1 -t utf-8 -c ./doc/README.intl -o ./doc/README.intl
