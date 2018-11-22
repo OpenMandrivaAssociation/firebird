@@ -386,6 +386,7 @@ iconv -f ISO-8859-1 -t utf-8 -c ./doc/README.intl -o ./doc/README.intl
 %define _disable_ld_no_undefined 1
 %define Werror_cflags %{nil}
 
+export CXX="%__cxx -std=gnu++11"
 # classic
 NOCONFIGURE=1 ./autogen.sh
 %configure --prefix=%{fbroot} --with-system-icu --with-system-editline \
