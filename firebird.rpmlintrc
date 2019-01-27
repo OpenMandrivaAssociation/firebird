@@ -1,6 +1,0 @@
-addFilter("E: binary-or-shlib-defines-rpath.*")
-addFilter("E: shared-lib-not-executable")
-#false positive
-addFilter('E: incoherent-version-in-name')
-addFilter('E: empty-%post')
-
