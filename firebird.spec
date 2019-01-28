@@ -342,7 +342,9 @@ make -f Makefile.install buildRoot
 chmod -R u+w buildroot%{_docdir}/%{name}
 
 %install
-chmod u+rw,a+rx gen/buildroot/usr/include/firebird/impl
+ls gen
+ls gen/buildroot
+#chmod u+rw,a+rx gen/buildroot/usr/include/firebird/impl
 cp -r gen/buildroot/* %{buildroot}/
 mkdir -p %{buildroot}%{_libdir}/pkgconfig
 cp -v gen/install/misc/*.pc %{buildroot}%{_libdir}/pkgconfig/
