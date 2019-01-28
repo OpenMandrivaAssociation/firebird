@@ -4,10 +4,12 @@
 %define		libfbclient %mklibname fbclient %{major}
 %define		libfbclient_devel %mklibname fbclient -d
 
+%define __noautoreq '/usr/bin/sh'
+
 Summary:	Firebird SQL database management system
 Name:		firebird
 Version:	%{oversion}.33054
-Release:	2
+Release:	3
 Group:		Databases
 License:	MPLv1.1-like
 URL:		http://www.firebirdsql.org/
