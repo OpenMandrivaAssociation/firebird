@@ -1,4 +1,4 @@
-%define		oversion 3.0.4
+%define		oversion 3.0.7
 %define		major 2
 %define		pkgversion Firebird-%{version}-0
 %define		libfbclient %mklibname fbclient %{major}
@@ -6,12 +6,12 @@
 
 Summary:	Firebird SQL database management system
 Name:		firebird
-Version:	%{oversion}.33054
-Release:	4
+Version:	%{oversion}.33374
+Release:	1
 Group:		Databases
 License:	MPLv1.1-like
 URL:		http://www.firebirdsql.org/
-Source0:	https://github.com/FirebirdSQL/firebird/releases/download/R3_0_4/%{pkgversion}.tar.bz2
+Source0:	https://github.com/FirebirdSQL/firebird/releases/download/R3_0_7/%{pkgversion}.tar.bz2
 Source1:	firebird-logrotate
 Source2:	README.OMV
 Source3:	firebird.conf
