@@ -1,9 +1,20 @@
-Description: Link isql with ICU instead of embedding part of it in the source
-Author: Damyan Ivanov <dmn@debian.org>
-
---- a/src/isql/isql.epp
-+++ b/src/isql/isql.epp
-@@ -168,34 +168,6 @@ const char* UNKNOWN = "*unknown*";
+diff -uraN Firebird-3.0.7.33374-0/builds/posix/Makefile.in omv-Firebird-3.0.7.33374-0/builds/posix/Makefile.in
+--- Firebird-3.0.7.33374-0/builds/posix/Makefile.in	2020-10-20 10:40:05.000000000 +0200
++++ omv-Firebird-3.0.7.33374-0/builds/posix/Makefile.in	2021-01-17 16:59:04.444161550 +0100
+@@ -484,7 +484,8 @@
+ isql:			$(ISQL)
+ 
+ $(ISQL):		$(ISQL_Objects) $(COMMON_LIB)
+-	$(EXE_LINK) $(EXE_LINK_OPTIONS) $^ -o $@ $(FIREBIRD_LIBRARY_LINK) $(LIBEDITLINE) $(LINK_LIBS) $(call LINK_DARWIN_RPATH,..)
++	$(EXE_LINK) $(EXE_LINK_OPTIONS) $^ -o $@ $(FIREBIRD_LIBRARY_LINK) \
++		$(LIBEDITLINE) $(LINK_LIBS) $(ICU_LIBS)
+ 
+ nbackup:		$(NBACKUP)
+ 
+diff -uraN Firebird-3.0.7.33374-0/src/isql/isql.epp omv-Firebird-3.0.7.33374-0/src/isql/isql.epp
+--- Firebird-3.0.7.33374-0/src/isql/isql.epp	2020-10-20 10:40:05.000000000 +0200
++++ omv-Firebird-3.0.7.33374-0/src/isql/isql.epp	2021-01-17 16:57:39.008646559 +0100
+@@ -167,33 +167,6 @@
  
  namespace IcuUtil
  {
@@ -34,19 +45,6 @@ Author: Damyan Ivanov <dmn@debian.org>
 -		5, 5,       /* illegal in Unicode */
 -		0, 0        /* illegal bytes 0xfe and 0xff */
 -	};
--
+ 
  	// Return the number of characters of a string.
  	static unsigned charLength(SSHORT charset, unsigned len, const char* str)
- 	{
---- a/builds/posix/Makefile.in
-+++ b/builds/posix/Makefile.in
-@@ -476,7 +476,8 @@ $(GSTAT):		$(GSTAT_Objects) $(COMMON_LIB
- isql:			$(ISQL)
- 
- $(ISQL):		$(ISQL_Objects) $(COMMON_LIB)
--	$(EXE_LINK) $(EXE_LINK_OPTIONS) $^ -o $@ $(FIREBIRD_LIBRARY_LINK) $(LIBEDITLINE) $(LINK_LIBS)
-+	$(EXE_LINK) $(EXE_LINK_OPTIONS) $^ -o $@ $(FIREBIRD_LIBRARY_LINK) \
-+	    $(LIBEDITLINE) $(LINK_LIBS) $(ICU_LIBS)
- 
- nbackup:		$(NBACKUP)
- 
