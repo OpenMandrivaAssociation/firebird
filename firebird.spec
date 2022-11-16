@@ -30,6 +30,7 @@ Patch205:	cloop-honour-build-flags.patch
 BuildRequires:	autoconf
 BuildRequires:	automake
 BuildRequires:	tommath-devel
+BuildRequires:	tomcrypt-devel
 BuildRequires:	libtool
 BuildRequires:	pkgconfig(ncurses)
 BuildRequires:	icu-devel
