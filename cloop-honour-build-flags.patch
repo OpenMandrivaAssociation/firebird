@@ -15,10 +15,11 @@ diff -uraN Firebird-3.0.7.33374-0/extern/cloop/Makefile omv-Firebird-3.0.7.33374
  OBJS_CPP := $(patsubst $(SRC_DIR)/%.cpp,$(OBJ_DIR)/%.o,$(SRCS_CPP))
  
 -C_FLAGS := -ggdb -fPIC -MMD -MP -W -Wall -Wno-unused-parameter
--CXX_FLAGS := $(C_FLAGS)
+-CXX_FLAGS := $(C_FLAGS) -std=c++11
 +COMMON_C_FLAGS := -ggdb -fPIC -MMD -MP -W -Wall -Wno-unused-parameter
 +C_FLAGS := $(COMMON_C_FLAGS) $(CFLAGS) $(CPPFLAGS)
 +CXX_FLAGS := $(COMMON_C_FLAGS) $(CXXFLAGS) $(CPPFLAGS)
- FPC_FLAGS := -Mdelphi
+ FPC_FLAGS := -Mdelphi -Cg
  
- ifeq ($(TARGET),release)
+ ifeq ($(shell uname),FreeBSD)
+

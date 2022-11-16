@@ -1,13 +1,12 @@
 diff -uraN Firebird-3.0.7.33374-0/builds/posix/Makefile.in omv-Firebird-3.0.7.33374-0/builds/posix/Makefile.in
 --- Firebird-3.0.7.33374-0/builds/posix/Makefile.in	2020-10-20 10:40:05.000000000 +0200
 +++ omv-Firebird-3.0.7.33374-0/builds/posix/Makefile.in	2021-01-17 16:59:04.444161550 +0100
-@@ -484,7 +484,8 @@
+@@ -484,7 +484,7 @@
  isql:			$(ISQL)
  
  $(ISQL):		$(ISQL_Objects) $(COMMON_LIB)
--	$(EXE_LINK) $(EXE_LINK_OPTIONS) $^ -o $@ $(FIREBIRD_LIBRARY_LINK) $(LIBEDITLINE) $(LINK_LIBS) $(call LINK_DARWIN_RPATH,..)
-+	$(EXE_LINK) $(EXE_LINK_OPTIONS) $^ -o $@ $(FIREBIRD_LIBRARY_LINK) \
-+		$(LIBEDITLINE) $(LINK_LIBS) $(ICU_LIBS)
+-	$(EXE_LINK) $(EXE_LINK_OPTIONS) $^ -o $@ $(FIREBIRD_LIBRARY_LINK) $(LIBEDITLINE) $(TERMLIB) $(LINK_LIBS)
++	$(EXE_LINK) $(EXE_LINK_OPTIONS) $^ -o $@ $(FIREBIRD_LIBRARY_LINK) $(LIBEDITLINE) $(TERMLIB) $(LINK_LIBS) $(ICU_LIBS)
  
  nbackup:		$(NBACKUP)
  

@@ -34,8 +34,8 @@ index 717f5eccc53d..60b3aaa5b08b 100644
          gen/install/misc/rc.config.firebird:builds/install/arch-specific/linux/rc.config.firebird.in
 +        gen/install/misc/fbclient.pc:builds/install/arch-specific/linux/misc/fbclient.pc.in
          gen/Release/firebird/bin/linuxLibrary.sh:builds/install/arch-specific/linux/linuxLibrary.sh.in
-         gen/install/misc/firebird-classic@.service:builds/install/arch-specific/linux/firebird-classic.service.in
-         gen/install/misc/firebird-classic.socket:builds/install/arch-specific/linux/firebird-classic.socket.in
+         gen/install/misc/firebird.service:builds/install/arch-specific/linux/firebird.service.in
+     ],
 -- 
 2.3.4
 
