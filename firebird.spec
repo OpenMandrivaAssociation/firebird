@@ -90,11 +90,13 @@ in production systems, under a variety of names, since 1981.
 %config(noreplace) %{_sysconfdir}/%{name}/fbtrace.conf
 %config(noreplace) %{_sysconfdir}/%{name}/firebird.conf
 %config(noreplace) %{_sysconfdir}/%{name}/plugins.conf
+%config(noreplace) %{_sysconfdir}/%{name}/replication.conf
 %dir %{_libdir}/%{name}
 %dir %{_datadir}/%{name}
 %{_libdir}/%{name}/intl
 %{_libdir}/%{name}/plugins
 %{_datadir}/%{name}/misc
+%{_datadir}/%{name}/tzdata
 
 %dir %attr(0755,%{name},%{name}) %{_localstatedir}/lib/%{name}
 %dir %attr(0750,%{name},%{name}) %{_localstatedir}/lib/%{name}/secdb
@@ -289,7 +291,6 @@ in production systems, under a variety of names, since 1981.
 Group:		Databases
 Requires:	%{name}-doc = %{EVRD}
 Summary:	Examples for Firebird SQL server
-BuildArch:	noarch
 
 %description examples
 Examples for Firebird SQL server.
@@ -329,7 +330,8 @@ export CXXFLAGS="%{optflags} -fno-delete-null-pointer-checks -I/usr/include/tomm
   --with-fbmsg=%{_localstatedir}/lib/%{name}/system/ \
   --with-fblog=%{_localstatedir}/log/%{name} \
   --with-fbglock=%{_var}/run/%{name} \
-  --with-fbplugins=%{_libdir}/%{name}/plugins
+  --with-fbplugins=%{_libdir}/%{name}/plugins \
+  --with-fbtzdata=%{_datadir}/%{name}/tzdata
 
 # Can't use %%make_build as it seems that sometimes parallel build is broken
 make
