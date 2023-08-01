@@ -314,7 +314,13 @@ in production systems, under a variety of names, since 1981.
 NOCONFIGURE=1 ./autogen.sh
 export CFLAGS="%{optflags} -I/usr/include/tommath"
 export CXXFLAGS="%{optflags} -fno-delete-null-pointer-checks -I/usr/include/tommath"
-%configure2_5x --prefix=%{_prefix} \
+%ifarch %{aarch64}
+# Using clang on aarch64 results in a bogus build time error
+# about -p (and if -p is patched out, a crash at build time)
+export CC=gcc
+export CXX=g++
+%endif
+%configure --prefix=%{_prefix} \
   --disable-binreloc \
   --with-system-editline \
   --with-fbbin=%{_bindir} --with-fbsbin=%{_sbindir} \
