@@ -6,7 +6,7 @@ Summary:	Firebird SQL database management system
 Name:		firebird
 #Version:	%{oversion}.33374
 Version:	4.0.3
-Release:	1
+Release:	2
 Group:		Databases
 License:	MPLv1.1-like
 URL:		http://www.firebirdsql.org/
@@ -27,6 +27,7 @@ Patch202:	honour-buildflags.patch
 Patch203:	no-copy-from-icu.patch
 Patch205:	cloop-honour-build-flags.patch
 
+BuildRequires:	rpm-helper
 BuildRequires:	autoconf
 BuildRequires:	automake
 BuildRequires:	tommath-devel
