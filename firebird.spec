@@ -1,3 +1,4 @@
+%global build_ldflags %{build_ldflags} -Wl,--undefined-version
 %define		major 2
 %define		libfbclient %mklibname fbclient
 %define		devfbclient %mklibname fbclient -d
@@ -5,8 +6,8 @@
 Summary:	Firebird SQL database management system
 Name:		firebird
 #Version:	%{oversion}.33374
-Version:	4.0.3
-Release:	2
+Version:	4.0.4
+Release:	1
 Group:		Databases
 License:	MPLv1.1-like
 URL:		http://www.firebirdsql.org/
