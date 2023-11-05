@@ -1,3 +1,4 @@
+%global build_ldflags %{build_ldflags} -Wl,--undefined-version
 %define		major 2
 %define		libfbclient %mklibname fbclient
 %define		devfbclient %mklibname fbclient -d
