@@ -19,7 +19,7 @@ Source3:	firebird.conf
 Source4:	fb_config
 
 # from OpenSuse
-Patch101:	add-pkgconfig-files.patch
+#Patch101:	add-pkgconfig-files.patch
 #Patch103:	Provide-sized-global-delete-operators-when-compiled.patch
 
 # from Debian to be sent upstream
