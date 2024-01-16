@@ -8,20 +8,22 @@ Description: improved support for build flags
  linking.
 Author: Damyan Ivanov <dmn@debian.org>
 
---- a/builds/posix/Makefile.in
-+++ b/builds/posix/Makefile.in
-@@ -623,7 +623,7 @@ MAKE_HEADER_Src = $(addprefix $(SRC_ROOT
+diff -uraN firebird-5.0.0/builds/posix/Makefile.in omv-firebird-5.0.0/builds/posix/Makefile.in
+--- firebird-5.0.0/builds/posix/Makefile.in	2024-01-11 02:17:47.000000000 +0100
++++ omv-firebird-5.0.0/builds/posix/Makefile.in	2024-01-16 19:53:25.502238570 +0100
+@@ -429,7 +429,7 @@
  boot: $(GPRE_BOOT)
  
  $(GPRE_BOOT):	$(GPRE_Boot_Objects) $(COMMON_LIB)
--	$(STATICEXE_LINK) $(EXE_LINK_OPTIONS) $^ -o $@ -L$(LIB) $(LINK_LIBS)
-+	$(STATICEXE_LINK) $(EXE_LINK_OPTIONS) $(LINK_OPTS) $(CPPFLAGS) $^ -o $@ -L$(LIB) $(LINK_LIBS)
+-	$(EXE_LINK) $(EXE_LINK_OPTIONS) $^ -o $@ -L$(LIB) -L$(STATIC_LIB) $(LINK_LIBS)
++	$(EXE_LINK) $(EXE_LINK_OPTIONS) $(LINK_OPTS) $(CPPFLAGS) $^ -o $@ -L$(LIB) $(LINK_LIBS)
  	-$(RM) $(GPRE_CURRENT)
  	(cd $(@D); $(LN) $(@F) $(notdir $(GPRE_CURRENT)))
  
---- a/extern/btyacc/Makefile
-+++ b/extern/btyacc/Makefile
-@@ -42,7 +42,7 @@ OTHERS	      = README README.BYACC \
+diff -uraN firebird-5.0.0/extern/btyacc/Makefile omv-firebird-5.0.0/extern/btyacc/Makefile
+--- firebird-5.0.0/extern/btyacc/Makefile	2024-01-11 02:17:47.000000000 +0100
++++ omv-firebird-5.0.0/extern/btyacc/Makefile	2024-01-16 19:54:35.155336361 +0100
+@@ -42,7 +42,7 @@
  all:		$(PROGRAM)
  
  $(PROGRAM):     $(OBJS) $(LIBS)
@@ -30,4 +32,3 @@ Author: Damyan Ivanov <dmn@debian.org>
  
  clean:;		rm -f $(OBJS)
  
-
