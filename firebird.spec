@@ -24,7 +24,7 @@ Source4:	fb_config
 
 # from Debian to be sent upstream
 Patch201:	obsolete-syslogd.target.patch
-#Patch202:	honour-buildflags.patch
+Patch202:	honour-buildflags.patch
 Patch203:	no-copy-from-icu.patch
 Patch205:	cloop-honour-build-flags.patch
 
@@ -227,7 +227,7 @@ in production systems, under a variety of names, since 1981.
 
 %files -n %{devfbclient}
 %{_libdir}/libfbclient.so
-%{_libdir}/pkgconfig/fbclient.pc
+#{_libdir}/pkgconfig/fbclient.pc
 
 #---------------------------------------------------------------------------
 
@@ -352,8 +352,8 @@ ls gen
 ls gen/buildroot
 #chmod u+rw,a+rx gen/buildroot/usr/include/firebird/impl
 cp -r gen/buildroot/* %{buildroot}/
-mkdir -p %{buildroot}%{_libdir}/pkgconfig
-cp -v gen/install/misc/*.pc %{buildroot}%{_libdir}/pkgconfig/
+#mkdir -p %{buildroot}%{_libdir}/pkgconfig
+#cp -v gen/install/misc/*.pc %{buildroot}%{_libdir}/pkgconfig/
 
 cd %{buildroot}
 rm -vf .%{_sbindir}/*.sh
