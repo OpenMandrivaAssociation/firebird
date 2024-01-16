@@ -24,7 +24,7 @@ Source4:	fb_config
 
 # from Debian to be sent upstream
 Patch201:	obsolete-syslogd.target.patch
-Patch202:	honour-buildflags.patch
+#Patch202:	honour-buildflags.patch
 Patch203:	no-copy-from-icu.patch
 Patch205:	cloop-honour-build-flags.patch
 
