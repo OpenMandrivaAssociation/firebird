@@ -104,8 +104,7 @@ in production systems, under a variety of names, since 1981.
 %dir %attr(0750,%{name},%{name}) %{_localstatedir}/lib/%{name}/secdb
 %dir %attr(0750,%{name},%{name}) %{_localstatedir}/lib/%{name}/data
 %dir %attr(0755,%{name},%{name}) %{_localstatedir}/lib/%{name}/system
-#attr(0600,%{name},%{name}) %config(noreplace) %{_localstatedir}/lib/%{name}/secdb/security4.fdb
-#attr(0644,%{name},%{name}) %{_localstatedir}/lib/%{name}/system/help.fdb
+%dir %attr(0755,%{name},%{name}) %{_localstatedir}/%{name}/secdb/security5.fdb
 %attr(0644,%{name},%{name}) %{_localstatedir}/lib/%{name}/system/firebird.msg
 %attr(0644,root,root) %{_tmpfilesdir}/firebird.conf 
 %dir %{_localstatedir}/log/%{name}
