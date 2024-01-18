@@ -284,7 +284,7 @@ in production systems, under a variety of names, since 1981.
 %{_bindir}/gsec
 %{_bindir}/isql-fb
 %{_bindir}/nbackup
-%{_bindir}/qli
+#{_bindir}/qli
 %{_bindir}/gsplit
 
 #---------------------------------------------------------------------------
