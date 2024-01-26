@@ -298,6 +298,11 @@ in production systems, under a variety of names, since 1981.
 %prep
 %autosetup -p1
 
+# Clang on aarch64 doesn't like -p
+if ! echo %{__cc} |grep -q gcc; then
+	sed -i -e 's,-p -MMD,-MMD,g' ./builds/posix/prefix.linux_arm64
+fi
+
 %build
 NOCONFIGURE=1 ./autogen.sh
 export CFLAGS="%{optflags} -I/usr/include/tommath"
