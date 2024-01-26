@@ -113,11 +113,9 @@ in production systems, under a variety of names, since 1981.
 
 %defattr(0755,root,root,0755)
 %{_unitdir}/%{name}.service
+%{_sysusersdir}/%{name}.conf
 
 %pre
-# Create the firebird user and group if it doesn't exist
-%_pre_useradd %{name} %{_localstatedir}/lib/%{name}/data /sbin/nologin 
-
 # Add gds_db to /etc/services if needed
 FileName=/etc/services
 newLine="gds_db 3050/tcp  # Firebird SQL Database Remote Protocol"
@@ -125,17 +123,6 @@ oldLine=`grep "^gds_db" $FileName`
 if [ -z "$oldLine" ]; then
  echo $newLine >> $FileName
 fi
-
-
-%post
-%tmpfiles_create %{name}
-%_post_service %{name}
-
-%postun
-%_postun_userdel %{name}
-
-%preun
-%_preun_service %{name}
 
 #---------------------------------------------------------------------------
 
@@ -315,13 +302,7 @@ in production systems, under a variety of names, since 1981.
 NOCONFIGURE=1 ./autogen.sh
 export CFLAGS="%{optflags} -I/usr/include/tommath"
 export CXXFLAGS="%{optflags} -fno-delete-null-pointer-checks -I/usr/include/tommath"
-%ifarch %{aarch64}
-# Using clang on aarch64 results in a bogus build time error
-# about -p (and if -p is patched out, a crash at build time)
-export CC=gcc
-export CXX=g++
-%endif
-%configure --prefix=%{_prefix} \
+%configure \
   --disable-binreloc \
   --with-system-editline \
   --with-fbbin=%{_bindir} --with-fbsbin=%{_sbindir} \
@@ -383,3 +364,7 @@ cp %{SOURCE3} .%{_tmpfilesdir}/
 mkdir -p .%{_unitdir}
 cp .%{_datadir}/%{name}/misc/%{name}.service .%{_unitdir}/%{name}.service
 
+mkdir -p .%{_sysusersdir}
+cat >.%{_sysusersdir}/%{name}.conf <<'EOF'
+u %{name} - %{_localstatedir}/lib/%{name}/data /sbin/nologin
+EOF
