@@ -6,7 +6,7 @@
 Summary:	Firebird SQL database management system
 Name:		firebird
 #Version:	%{oversion}.33374
-Version:	5.0.0
+Version:	5.0.1
 Release:	1
 Group:		Databases
 License:	MPLv1.1-like
