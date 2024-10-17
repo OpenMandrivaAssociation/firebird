@@ -10,7 +10,7 @@ Version:	5.0.1
 Release:	1
 Group:		Databases
 License:	MPLv1.1-like
-URL:		http://www.firebirdsql.org/
+URL:		https://www.firebirdsql.org/
 #Source0:	https://github.com/FirebirdSQL/firebird/releases/download/v%{oversion}/%{name}-%{version}.tar.gz
 Source0:	https://github.com/FirebirdSQL/firebird/archive/refs/tags/v%{version}/%{name}-%{version}.tar.gz
 Source1:	firebird-logrotate
