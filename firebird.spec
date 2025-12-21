@@ -28,6 +28,8 @@ Patch201:	obsolete-syslogd.target.patch
 Patch203:	no-copy-from-icu.patch
 Patch205:	cloop-honour-build-flags.patch
 
+BuildRequires:	libtool-base
+BuildRequires:	slibtool
 BuildRequires:	rpm-helper
 BuildRequires:	autoconf
 BuildRequires:	automake
