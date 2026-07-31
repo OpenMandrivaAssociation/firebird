@@ -6,7 +6,7 @@
 Summary:	Firebird SQL database management system
 Name:		firebird
 #Version:	%{oversion}.33374
-Version:	5.0.3
+Version:	5.0.4.1812
 Release:	1
 Group:		Databases
 License:	MPLv1.1-like
@@ -298,7 +298,7 @@ in production systems, under a variety of names, since 1981.
 #---------------------------------------------------------------------------
 
 %prep
-%autosetup -p1
+%autosetup -p1 -n firebird-5.0.4
 
 # Clang on aarch64 doesn't like -p
 if ! echo %{__cc} |grep -q gcc; then
